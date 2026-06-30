@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: 14th-BeneFitU-Backend
+
+  # [1] 데이터베이스 연동 설정
+  datasource:
+    url: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # [2] ORM 설정
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # [3] 시큐리티 고정 계정 설정
+  security:
+    user:
+      name: user
+      password: "0000"
+
+# [4] JWT 설정
+jwt:
+  secret: ${JWT_SECRET_KEY}
+
+# [5] 스웨거 문서 설정
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha

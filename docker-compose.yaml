@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # 1. MySQL 데이터베이스 서비스
+  mysql:
+    image: mysql:8.0
+    container_name: benefitu-db
+    restart: always
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql # 하단 선언부와 이름을 일치시켰습니다.
+    environment:
+      # root 계정 생성
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      # user 계정 생성
+      MYSQL_USER: ${SPRING_DATASOURCE_USERNAME}
+      MYSQL_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      TZ: Asia/Seoul
+
+  # 2. 스프링 부트 백엔드 애플리케이션 서비스
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: benefitu-app
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql # mysql 서비스가 먼저 시작되도록 보장합니다.
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      # 컨테이너 환경에서 mysql 서비스 이름(mysql:3306)으로 접근하도록 URL을 주입
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+
+volumes:
+  mysql-data:
