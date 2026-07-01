@@ -2,7 +2,7 @@ spring:
   application:
     name: 14th-BeneFitU-Backend
 
-  # [1] 데이터베이스 연동 설정
+  # [1] 데이터베이스 연동 설정 (도커 컴포즈 'mysql' 서비스 명세와 연동)
   datasource:
     url: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -11,25 +11,19 @@ spring:
 
   # [2] ORM 설정
   jpa:
-    open-in-view: false
+    open-in-view: false  # 트래픽 처리를 위해 영속성 컨텍스트 범위를 서비스 레이어로 제한 (매우 훌륭함)
     hibernate:
-      ddl-auto: update
+      ddl-auto: update   # 로컬/해커톤 개발용 (운영서버 배포 시에는 가급적 none 이나 validate 권장)
     show-sql: true
     properties:
       hibernate:
         format_sql: true
 
-  # [3] 시큐리티 고정 계정 설정
-  security:
-    user:
-      name: user
-      password: "0000"
-
-# [4] JWT 설정
+# [3] JWT 설정
 jwt:
   secret: ${JWT_SECRET_KEY}
 
-# [5] 스웨거 문서 설정
+# [4] 스웨거 문서 설정 (오타 수정 완료)
 springdoc:
   api-docs:
     path: /v3/api-docs

@@ -1,19 +1,20 @@
 package com.fitu.benefitu.global.response;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fitu.benefitu.global.error.code.BaseErrorCode;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record ApiResponse<T> (
+public record ApiResponse<T>(
         boolean isSuccess,
         String code,
         String message,
         T result
-){
+) {
     public static <T> ApiResponse<T> success(T result) {
-        return new ApiResponse<>(true,"COMMON_200","요청에 성공했습니다.",result);
+        return new ApiResponse<>(true, "COMMON_200", "요청에 성공했습니다.", result);
     }
 
-    public static ApiResponse<Void> success(){
+    public static ApiResponse<Void> success() {
         return success(null);
     }
 
@@ -22,7 +23,7 @@ public record ApiResponse<T> (
     }
 
     public static ApiResponse<Void> fail(BaseErrorCode errorCode) {
-        return fail(errorCode,null);
+        return fail(errorCode, null);
     }
 }
 
