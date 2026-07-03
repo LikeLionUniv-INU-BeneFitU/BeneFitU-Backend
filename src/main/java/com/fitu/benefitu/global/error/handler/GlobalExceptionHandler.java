@@ -4,6 +4,7 @@ import com.fitu.benefitu.global.error.code.GlobalErrorCode;
 import com.fitu.benefitu.global.error.exception.GeneralException;
 import com.fitu.benefitu.global.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,6 +38,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(GlobalErrorCode.INVALID_INPUT_VALUE.getStatus())
                 .body(new ApiResponse<>(false, GlobalErrorCode.INVALID_INPUT_VALUE.getCode(), message, null));
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInternalAuthenticationException(InternalAuthenticationServiceException exception) {
+        // 내부에 진짜 원인이 된 예외가 GeneralException인지 확인
+        if (exception.getCause() instanceof GeneralException generalException) {
+            return ResponseEntity
+                    .status(generalException.getErrorCode().getStatus())
+                    .body(ApiResponse.fail(generalException.getErrorCode()));
+        }
+
+        // 만약 다른 시큐리티 에러라면 기본 500 에러 처리
+        return ResponseEntity
+                .status(GlobalErrorCode.INTERNAL_SERVER_ERROR.getStatus())
+                .body(ApiResponse.fail(GlobalErrorCode.INTERNAL_SERVER_ERROR));
     }
 
     /**
