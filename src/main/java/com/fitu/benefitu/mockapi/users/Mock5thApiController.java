@@ -23,7 +23,6 @@ public class Mock5thApiController {
      */
     @PatchMapping("/info") // 혹은 팀의 갱신 엔드포인트 명세에 맞춰 경로 수정 가능
     public ApiResponse<?> updateUserInfo(
-            @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody UserInfoRequest request
     ) {
         // 실제 로직 시: userDetails.getUsername() 기반으로 기존 USERS, USER_DETAILS 테이블 데이터를 Dirty Checking 등으로 수정

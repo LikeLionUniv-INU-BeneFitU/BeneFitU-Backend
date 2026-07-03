@@ -23,9 +23,7 @@ public class Mock6thApiController {
      * - 셀렉트 박스 렌더링용 더미 데이터를 명세서 예시와 한 치의 오차도 없이 반환합니다.
      */
     @GetMapping("/meta-data") // 혹은 팀의 명세에 맞춰 /options, /setup 등으로 변경 가능
-    public ApiResponse<MetaSetupResponse> getMetaSetupData(
-            @AuthenticationPrincipal UserDetails userDetails
-    ) {
+    public ApiResponse<MetaSetupResponse> getMetaSetupData() {
         // 1. 멋사대학교 & 전공 목록 세팅
         SchoolInfo school1 = SchoolInfo.builder()
                 .schoolId(1L)
