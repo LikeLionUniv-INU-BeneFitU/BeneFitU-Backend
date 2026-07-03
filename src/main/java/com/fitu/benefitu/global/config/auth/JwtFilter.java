@@ -1,4 +1,4 @@
-package com.fitu.benefitu.global.config.jwt;
+package com.fitu.benefitu.global.config.auth;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

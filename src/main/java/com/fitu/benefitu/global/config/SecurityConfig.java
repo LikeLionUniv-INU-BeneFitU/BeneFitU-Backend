@@ -1,13 +1,15 @@
 package com.fitu.benefitu.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fitu.benefitu.global.config.jwt.JsonLoginSuccessHandler;
-import com.fitu.benefitu.global.config.jwt.JwtFilter;
+import com.fitu.benefitu.global.config.auth.JwtFilter;
 import com.fitu.benefitu.global.response.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,10 +25,10 @@ import java.util.List;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JsonLoginSuccessHandler jsonLoginSuccessHandler, JwtFilter jwtFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers(
                                 "/swagger-ui.html",
@@ -34,7 +36,7 @@ public class SecurityConfig {
                                 "/v3/api-docs",
                                 "/v3/api-docs/**",
                                 "/v3/api-docs.yaml",
-                                "/login"    // 최초 로그인 시 열어둘 주소
+                                "/api/auth/**"    // 최초 로그인 시 열어둘 주소
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -56,8 +58,6 @@ public class SecurityConfig {
                         }))
                 // 세션 정책 -> 무상태성
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 토큰 반환하도록 설정
-                .formLogin(form -> form.successHandler(jsonLoginSuccessHandler))
                 // 커스텀 JWT 필터 등록
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -85,5 +85,10 @@ public class SecurityConfig {
 
         // 테스트용
         return NoOpPasswordEncoder.getInstance();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }
