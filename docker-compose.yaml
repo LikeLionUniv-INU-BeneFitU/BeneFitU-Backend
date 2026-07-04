@@ -5,31 +5,27 @@ services:
     restart: always
     ports:
       - "3307:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${SPRING_DATASOURCE_USERNAME}
       MYSQL_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      TZ: Asia/Seoul
-    # B가 완전히 준비되었는지 검사하는 헬스체크 추가
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    volumes:
+      - mysql-data:/var/lib/mysql
 
   app:
     image: ${DOCKER_USERNAME}/benefitu-backend:latest
     container_name: benefitu-app
     restart: always
-    ports:
-      - "8080:8080"
     depends_on:
-      mysql:
-        condition: service_healthy # mysql이 'healthy' 상태가 될 때까지 스프링 시동을 대기
+      - mysql
     environment:
+      # 'mysql'이라는 서비스 이름을 주소로 사용
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql-data:
