@@ -10,6 +10,11 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${SPRING_DATASOURCE_USERNAME}
       MYSQL_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
       - mysql-data:/var/lib/mysql
 
@@ -18,7 +23,8 @@ services:
     container_name: benefitu-app
     restart: always
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       # 주소를 localhost가 아닌, docker-compose 서비스 이름인 'mysql'로 명시
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
