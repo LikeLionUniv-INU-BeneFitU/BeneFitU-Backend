@@ -4,8 +4,6 @@ import com.fitu.benefitu.global.response.ApiResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,8 +27,8 @@ public class Mock6thApiController {
                 .schoolId(1L)
                 .schoolName("멋사대학교")
                 .majors(Arrays.asList(
-                        new MajorInfo(101L, "컴퓨터공학과"),
-                        new MajorInfo(102L, "정보통신학과")
+                        new departmentInfo(101L, "컴퓨터공학과"),
+                        new departmentInfo(102L, "정보통신학과")
                 ))
                 .build();
 
@@ -39,9 +37,9 @@ public class Mock6thApiController {
                 .schoolId(2L)
                 .schoolName("한국대학교")
                 .majors(Arrays.asList(
-                        new MajorInfo(201L, "경영학과"),
-                        new MajorInfo(202L, "경제학과"),
-                        new MajorInfo(203L, "통계학과")
+                        new departmentInfo(201L, "경영학과"),
+                        new departmentInfo(202L, "경제학과"),
+                        new departmentInfo(203L, "통계학과")
                 ))
                 .build();
 
@@ -50,8 +48,8 @@ public class Mock6thApiController {
                 .schoolId(3L)
                 .schoolName("미래대학교")
                 .majors(Arrays.asList(
-                        new MajorInfo(301L, "시각디자인학과"),
-                        new MajorInfo(302L, "산업디자인학과")
+                        new departmentInfo(301L, "시각디자인학과"),
+                        new departmentInfo(302L, "산업디자인학과")
                 ))
                 .build();
 
@@ -82,14 +80,14 @@ public class Mock6thApiController {
     public static class SchoolInfo {
         private Long schoolId;
         private String schoolName;
-        private List<MajorInfo> majors;
+        private List<departmentInfo> majors;
     }
 
     @Getter
     @RequiredArgsConstructor
-    public static class MajorInfo {
-        private final Long majorId;
-        private final String majorName;
+    public static class departmentInfo {
+        private final Long departmentId;
+        private final String departmentName;
     }
 
     @Getter

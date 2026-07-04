@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,9 +49,10 @@ public class Mock4thApiController {
     @Getter
     public static class RequestBaseInfo {
         private String schoolName;
-        private String majorName;
+        private String department;
         private Integer grade;
         private String residence;
+        private LocalDate birthDate;  // [년]-[월]-[일]
     }
 
     @Getter
@@ -59,7 +61,15 @@ public class Mock4thApiController {
         private Integer incomeBracket;
         private Boolean isBasicLiving;
         private Boolean isSecondLowest;
-        private List<String> interests;
+        private InterestFields interests;
+    }
+
+    @Getter
+    public static class InterestFields {
+        private Boolean corporate;
+        private Boolean region;
+        private Boolean requirements;
+        private Boolean state;
     }
 
     @Getter

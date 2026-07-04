@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -26,9 +28,10 @@ public class Mock3rdApiController {
         BaseInfo baseInfo = BaseInfo.builder()
                 .name("김멋사")
                 .schoolName("인천대학교")
-                .majorName("컴퓨터공학부")
+                .department("컴퓨터공학부")
                 .grade(3)
                 .residence("인천 연수구")
+                .birthDate(LocalDate.of(2003, 5,14))
                 .build();
 
         // 2. 노션 명세서 규격 100% 매핑 사용자 상세 정보
@@ -59,9 +62,10 @@ public class Mock3rdApiController {
     public static class BaseInfo {
         private String name;
         private String schoolName;
-        private String majorName;
+        private String department;
         private Integer grade;
         private String residence;
+        private LocalDate birthDate;  // [년]-[월]-[일]
     }
 
     @Getter
