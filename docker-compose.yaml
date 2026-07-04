@@ -20,7 +20,7 @@ services:
     depends_on:
       - mysql
     environment:
-      # 'mysql'이라는 서비스 이름을 주소로 사용
+      # 주소를 localhost가 아닌, docker-compose 서비스 이름인 'mysql'로 명시
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
