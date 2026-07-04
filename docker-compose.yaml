@@ -31,7 +31,6 @@ services:
     depends_on:
       - mysql # mysql 서비스가 먼저 시작되도록 보장합니다.
     environment:
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       # 컨테이너 환경에서 mysql 서비스 이름(mysql:3306)으로 접근하도록 URL을 주입
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
