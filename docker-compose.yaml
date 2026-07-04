@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-  # 1. MySQL 데이터베이스 서비스
   mysql:
     image: mysql:8.0
     container_name: benefitu-db
@@ -9,32 +6,30 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - mysql-data:/var/lib/mysql # 하단 선언부와 이름을 일치시켰습니다.
+      - mysql-data:/var/lib/mysql
     environment:
-      # root 계정 생성
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
-      # user 계정 생성
       MYSQL_USER: ${SPRING_DATASOURCE_USERNAME}
       MYSQL_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       TZ: Asia/Seoul
+    # B가 완전히 준비되었는지 검사하는 헬스체크 추가
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # 2. 스프링 부트 백엔드 애플리케이션 서비스
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${DOCKER_USERNAME}/benefitu-backend:latest
     container_name: benefitu-app
     restart: always
     ports:
       - "8080:8080"
     depends_on:
-      - mysql # mysql 서비스가 먼저 시작되도록 보장합니다.
+      mysql:
+        condition: service_healthy # mysql이 'healthy' 상태가 될 때까지 스프링 시동을 대기
     environment:
-      # 컨테이너 환경에서 mysql 서비스 이름(mysql:3306)으로 접근하도록 URL을 주입
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-
-volumes:
-  mysql-data:

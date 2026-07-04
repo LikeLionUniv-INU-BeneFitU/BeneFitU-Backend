@@ -2,7 +2,7 @@ name: BeneFitU Mock API CI/CD
 
 on:
   push:
-    branches: [ "mock/api" ] # 💡 형의 모킹 전용 브랜치 매핑 완료
+    branches: [ "mock/api" ]
 
 jobs:
   build-and-deploy:
@@ -25,7 +25,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # 4. 스프링 부트 프로젝트 빌드
+      # 4. 스프링 부트 프로젝트 빌드 (여기서 build/libs/*.jar가 생성됨)
       - name: Build with Gradle
         run: ./gradlew bootJar -x test
 
@@ -37,7 +37,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       # 6. 도커 이미지 빌드 및 푸시
-      # 💡 꿀팁: Dockerfile 내부에서는 환경변수(${...})를 직접 쓰지 않고 Jar만 말기 때문에 CI 단계에선 .env가 없어도 빌드가 정상 처리됩니다.
       - name: Build and Push Docker Image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/benefitu-backend:latest .
@@ -53,18 +52,18 @@ jobs:
           script: |
             cd /home/${{ secrets.USERNAME }}/likeLion/BeneFitU-Backend
             
-            # DB 환경변수
-            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
+            # DB 및 Docker 관련 환경변수를 .env에 동적 주입
+            echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > .env
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
             echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
             echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
             echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
             
-            # 최신 이미지 땡겨오고 컨테이너 리로드
+            # 도커 허브에서 6번 단계가 올려둔 최신 이미지를 실서버로 땡겨옴
             docker compose pull
-            docker compose up -d --build
             
-            # 옛날 불필요한 이미지 청소
-            docker image prune -f
+            # 최신 다운로드된 이미지로 컨테이너를 강제 재생성(--force-recreate)
+            docker compose up -d --force-recreate
             
-            # 옛날 불필요한 이미지 청소
+            # 사용하지 않는 옛날 이미지(명명되지 않은 쓰레기 이미지) 깔끔하게 청소
             docker image prune -f

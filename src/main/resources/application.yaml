@@ -19,11 +19,7 @@ spring:
       hibernate:
         format_sql: true
 
-# [3] JWT 설정
-jwt:
-  secret: ${JWT_SECRET_KEY}
-
-# [4] 스웨거 문서 설정 (오타 수정 완료)
+# [3] 스웨거 문서 설정 (오타 수정 완료)
 springdoc:
   api-docs:
     path: /v3/api-docs
