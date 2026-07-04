@@ -42,7 +42,7 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/benefitu-backend:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/benefitu-backend:latest
 
-      # 7. 실서버(EC2 등)에 SSH로 원격 접속하여 .env 동적 생성 및 도커 컴포즈 가동
+# 7. 실서버(EC2 등)에 SSH로 원격 접속하여 폴더 생성, 파일 세팅 및 도커 컴포즈 가동
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -50,20 +50,49 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            # 1. 프로젝트 폴더가 없다면 자동으로 생성하고 이동
+            mkdir -p /home/${{ secrets.USERNAME }}/likeLion/BeneFitU-Backend
             cd /home/${{ secrets.USERNAME }}/likeLion/BeneFitU-Backend
-            
-            # DB 및 Docker 관련 환경변수를 .env에 동적 주입
+
+            # 2. DB 및 Docker 관련 환경변수를 .env에 동적 주입
             echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > .env
             echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
             echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
             echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
             echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
-            
-            # 도커 허브에서 6번 단계가 올려둔 최신 이미지를 실서버로 땡겨옴
+
+            # 3. 서버에 docker-compose.yml 파일이 없을 테니, 여기서 직접 동적으로 생성해 버립니다.
+            cat << 'EOF' > docker-compose.yml
+            version: '3.8'
+            services:
+              backend:
+                image: ${DOCKER_USERNAME}/benefitu-backend:latest
+                container_name: benefitu-backend
+                ports:
+                  - "8080:8080"
+                environment:
+                  - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+                  - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+                  - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+                depends_on:
+                  - db
+
+              db:
+                image: mysql:8.0
+                container_name: benefitu-db
+                ports:
+                  - "3306:3306"
+                environment:
+                  - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+                  - MYSQL_DATABASE=${MYSQL_DATABASE}
+                volumes:
+                  - mysql_data:/var/lib/mysql
+
+            volumes:
+              mysql_data:
+            EOF
+
+            # 4. 도커 허브에서 최신 이미지를 땡겨오고 실행
             docker compose pull
-            
-            # 최신 다운로드된 이미지로 컨테이너를 강제 재생성(--force-recreate)
             docker compose up -d --force-recreate
-            
-            # 사용하지 않는 옛날 이미지(명명되지 않은 쓰레기 이미지) 깔끔하게 청소
             docker image prune -f
