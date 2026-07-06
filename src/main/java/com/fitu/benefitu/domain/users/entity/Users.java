@@ -1,6 +1,8 @@
 package com.fitu.benefitu.domain.users.entity;
 
 import com.fitu.benefitu.domain.users.dto.AuthSignupRequest;
+import com.fitu.benefitu.domain.users.dto.BaseInfoDto;
+import com.fitu.benefitu.domain.users.dto.UsersSubmitInfoRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,6 +17,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Users {
 
+    //객체생성구현해보기
     public static Users createUsers(AuthSignupRequest request){
         Users users = new Users();
         users.username = request.username();
@@ -31,7 +34,7 @@ public class Users {
     private String name;
     private String schoolName;
     private String department;
-    private Integer gradle;
+    private Integer grade;
     private String residence;
     private LocalDate birthDate;
     private Boolean hasDetails;
