@@ -1,5 +1,7 @@
 package com.fitu.benefitu.domain.benefits.entity;
 
+import com.fitu.benefitu.domain.benefits.entity.types.BenefitStatus;
+import com.fitu.benefitu.domain.benefits.entity.types.ExtractorId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,16 +19,17 @@ public class Benefits {
     private Long id;
 
     // 추출기 고유 번호
-    private String source_id;
+    @Enumerated(EnumType.STRING)
+    private ExtractorId sourceId;
 
     // 혜택 이름
-    private String benefit_name;
+    private String benefitName;
 
     // 금액
     private Long amount;
 
     // 관련 사이트
-    private String benefit_url;
+    private String benefitUrl;
 
     // 해당 혜택 상태(DB 상태) : SAFE / FETCHING / ERROR
     @Enumerated(EnumType.STRING)
@@ -36,8 +39,5 @@ public class Benefits {
     private LocalDateTime deadLine;
 
     // DB 가져온 날
-    private LocalDateTime fetched_at;
-
-    // image url
-    private String image_url;
+    private LocalDateTime fetchedAt;
 }

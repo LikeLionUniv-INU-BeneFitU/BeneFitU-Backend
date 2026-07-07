@@ -1,4 +1,4 @@
-package com.fitu.benefitu.domain.benefits.entity;
+package com.fitu.benefitu.domain.benefits.entity.types;
 
 public enum BenefitStatus {
     SAFE,   // 안정된 상태

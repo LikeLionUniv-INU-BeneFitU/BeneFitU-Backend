@@ -1,7 +1,7 @@
 package com.fitu.benefitu.domain.benefits.batch.mapper;
 
 import com.fitu.benefitu.domain.benefits.batch.module.youthcenter.dto.YouthPolicyApiResponse;
-import com.fitu.benefitu.domain.benefits.entity.BenefitStatus;
+import com.fitu.benefitu.domain.benefits.entity.types.BenefitStatus;
 import com.fitu.benefitu.domain.benefits.entity.Benefits;
 import org.springframework.stereotype.Component;
 
