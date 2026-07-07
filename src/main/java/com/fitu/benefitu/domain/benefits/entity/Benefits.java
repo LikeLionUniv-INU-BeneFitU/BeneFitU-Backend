@@ -1,7 +1,7 @@
 package com.fitu.benefitu.domain.benefits.entity;
 
-import com.fitu.benefitu.domain.benefits.entity.types.BenefitStatus;
-import com.fitu.benefitu.domain.benefits.entity.types.ExtractorId;
+import com.fitu.benefitu.domain.benefits.types.BenefitStatus;
+import com.fitu.benefitu.domain.benefits.types.ExtractorId;
 import jakarta.persistence.*;
 import lombok.*;
 

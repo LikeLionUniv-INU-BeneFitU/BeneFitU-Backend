@@ -1,7 +1,7 @@
 package com.fitu.benefitu.domain.benefits.entity;
 
-import com.fitu.benefitu.domain.benefits.entity.types.ResidenceType;
-import com.fitu.benefitu.domain.benefits.entity.types.SchoolType;
+import com.fitu.benefitu.domain.benefits.types.ResidenceType;
+import com.fitu.benefitu.domain.benefits.types.SchoolType;
 import jakarta.persistence.*;
 import lombok.*;
 
