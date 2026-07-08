@@ -5,6 +5,9 @@ import com.fitu.benefitu.domain.benefits.types.ResidenceType;
 import com.fitu.benefitu.domain.benefits.types.SchoolType;
 
 public record RawBenefit(
+        // 카테고리 활용
+        String pvsnInstGroupCode,   // 제공 그룹 [중앙부처 -> 0054001] [지자체 -> 0054002]
+
         // 혜택 내용
         // 정책명
         String BenefitName,
@@ -68,6 +71,7 @@ public record RawBenefit(
                 dto.getPtcpPrpTrgtCn() != null ? dto.getPtcpPrpTrgtCn() : "");
 
         return new RawBenefit(
+                dto.getPvsnlnstGroupCd(),
                 dto.getPlcyNm(),
                 (dto.getPlcyExplnCn() != null ? dto.getPlcyExplnCn() : "") + "\n" +
                         (dto.getEtcMttrCn() != null ? dto.getEtcMttrCn() : ""),

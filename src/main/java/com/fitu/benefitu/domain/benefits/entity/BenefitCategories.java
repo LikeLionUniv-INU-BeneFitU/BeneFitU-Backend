@@ -15,9 +15,9 @@ public class BenefitCategories {
     private Long id;
 
     // 혜택 ID
-    @JoinColumn
-    @ManyToOne
-    private Benefits benefitId;
+    @JoinColumn(name = "benefit_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Benefits benefit;
 
     // 혜택 카테고리
     @Enumerated(EnumType.STRING)

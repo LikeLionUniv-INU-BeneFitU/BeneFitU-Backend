@@ -40,6 +40,7 @@ public class YouthCenterFethcher implements BenefitsFetcher {
                 .uri(uriBuilder -> uriBuilder.path("/go/ythip/getPlcy")
                         .queryParam("apiKeyNm", apiKey.trim())
                         .queryParam("rtnType", "json")
+                        //.queryParam("plcyPvsnMthdCd", "0042006")
                         .queryParam("pageNum", pageNumber)
                         .queryParam("pageSize", pageSize)
                         .queryParam("pageType", "1") // 1: 목록 모드 추가!

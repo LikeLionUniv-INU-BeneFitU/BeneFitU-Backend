@@ -16,15 +16,16 @@ public class BenefitTargetConditions {
     private Long id;
 
     // 혜택 ID
-    @JoinColumn
-    @OneToOne
-    private Benefits benefitId;
+    @JoinColumn(name = "benefit_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Benefits benefit;
 
     // 학교 명
     @Enumerated(EnumType.STRING)
     private SchoolType schoolType;
 
     // 학과
+    @Convert(converter = DepartmentConverter.class)
     private SchoolType.Department departmentType;
 
     // 학년(최소 학년)

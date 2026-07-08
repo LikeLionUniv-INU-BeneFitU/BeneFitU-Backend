@@ -36,12 +36,14 @@ public class YouthPolicyApiResponse {
         private String plcyExplnCn; // 정책 내용
         private String etcMttrCn;   // 기타 사항 내용
         private String aplyUrlAddr; // 신청URL (benefit_url)
+        // 카테고리 분류 활용
+        private String pvsnlnstGroupCd; // 제공기관 그룹코드
+        private String plcyPvsnMthdCd;  // 제공방법 -> 카테고리 활용
         // 신청 기간
         private String aplyPrdSeCd; // 신청 기간 구분 코드
         private String aplyYmd;     // 신청 기간
         private String bizPrdEndYmd;// 사업종료일자 (deadLine 처리용)
 
-        private String plcyPvsnMthdCd;  // 제공방법 -> 카테고리 활용
         private String plcyAprvSttsCd;  // 정책 승인 -> 무조건 승인한 것만
         // 제약 조건
         private String plcyMajorCd; // 전공 코드

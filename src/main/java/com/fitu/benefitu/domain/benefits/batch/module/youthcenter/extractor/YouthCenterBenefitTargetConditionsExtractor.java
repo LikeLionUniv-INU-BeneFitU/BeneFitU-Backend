@@ -24,6 +24,9 @@ public class YouthCenterBenefitTargetConditionsExtractor implements BenefitsTarg
     public Integer extractGrade(RawBenefit rawBenefit) {
         String gradeCode = rawBenefit.grade();
 
+        if (gradeCode == null) {
+            return -1; // 또는 기본값 처리
+        }
         // 해당 사항 없으면 -1 처리
         Integer grade = GRADE_MAPPING.getOrDefault(gradeCode, -1);
 

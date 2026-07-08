@@ -1,10 +1,7 @@
 package com.fitu.benefitu.domain.benefits.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -17,10 +14,15 @@ public class BenefitScoringWeights {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 학점
+    // 혜택 ID
+    @JoinColumn(name = "benefit_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Benefits benefit;
+
+    // 학점(최소 요구 학점)
     private Float gpa;
 
-    // 소득 순위
+    // 소득 순위(등급) -> 이하
     private Integer incomeBracket;
 
     // 기초 생활 수급자 여부

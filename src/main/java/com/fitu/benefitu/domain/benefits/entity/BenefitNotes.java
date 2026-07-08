@@ -14,9 +14,9 @@ public class BenefitNotes {
     private Integer id;
 
     // 혜택 ID
-    @JoinColumn
-    @ManyToOne
-    private Benefits benefitId;
+    @JoinColumn(name = "benefit_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Benefits benefit;
 
     // 기타 사항 내용
     private String note;

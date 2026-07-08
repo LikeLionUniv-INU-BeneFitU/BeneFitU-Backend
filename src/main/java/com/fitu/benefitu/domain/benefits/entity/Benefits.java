@@ -7,6 +7,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -32,7 +34,7 @@ public class Benefits {
     // 관련 사이트
     private String benefitUrl;
 
-    // 해당 혜택 상태(DB 상태) : SAFE / FETCHING / ERROR
+    // 해당 혜택 상태(DB 상태)
     @Enumerated(EnumType.STRING)
     private BenefitStatus status;
 
@@ -41,4 +43,35 @@ public class Benefits {
 
     // 패치한 날
     private LocalDateTime fetchedAt;
+
+    // 추가: 부모가 삭제되면 자식들도 함께 삭제되도록(orphanRemoval = true)
+    @OneToOne(mappedBy = "benefit", cascade = CascadeType.ALL, orphanRemoval = true)
+    private BenefitTargetConditions targetConditions;
+
+    @OneToOne(mappedBy = "benefit", cascade = CascadeType.ALL, orphanRemoval = true)
+    private BenefitScoringWeights scoringWeights;
+
+    @OneToMany(mappedBy = "benefit", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default // Builder 사용 시 빈 리스트로 초기화되도록 설정
+    private List<BenefitCategories> categories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "benefit", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<BenefitNotes> notes = new ArrayList<>();
+
+    public void addTargetConditions(BenefitTargetConditions targetConditions) {
+        this.targetConditions = targetConditions;
+    }
+
+    public void addScoringWeights(BenefitScoringWeights scoringWeights) {
+        this.scoringWeights = scoringWeights;
+    }
+
+    public void addCategory(BenefitCategories category) {
+        this.categories.add(category);
+    }
+
+    public void addNote(BenefitNotes note) {
+        this.notes.add(note);
+    }
 }

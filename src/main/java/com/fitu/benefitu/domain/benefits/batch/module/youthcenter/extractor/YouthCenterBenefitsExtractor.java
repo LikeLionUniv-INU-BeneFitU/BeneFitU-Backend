@@ -106,7 +106,9 @@ public class YouthCenterBenefitsExtractor implements BenefitsExtractor {
                         Integer.parseInt(lastDateStr.substring(4, 6)),
                         Integer.parseInt(lastDateStr.substring(6, 8))
                 );
-                return new DeadlineResult(DeadlineResult.STATUS_DATE, date); // 객체로 감싸서 반환
+                if (date.isAfter(LocalDate.now())) {
+                    return new DeadlineResult(DeadlineResult.STATUS_DATE, date); // 객체로 감싸서 반환
+                }
             } catch (Exception e) {
                 return null; // 파싱 실패 시
             }

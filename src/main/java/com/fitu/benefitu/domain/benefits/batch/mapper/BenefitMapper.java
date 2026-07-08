@@ -5,7 +5,7 @@ import com.fitu.benefitu.domain.benefits.types.BenefitStatus;
 import com.fitu.benefitu.domain.benefits.entity.Benefits;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Component
 public class BenefitMapper {
@@ -17,8 +17,8 @@ public class BenefitMapper {
                 .build();
     }
 
-    private LocalDateTime parseDate(String dateStr) {
-        // "20261231" 같은 형식을 LocalDateTime으로 변환하는 로직 구현
+    private LocalDate parseDate(String dateStr) {
+        // "20261231" 같은 형식을 LocalDate으로 변환하는 로직 구현
         return null;
     }
 }
