@@ -37,23 +37,26 @@ public class UsersService {
         return new AuthSignupResponse(user.getUsername());
     }
 
-    //중복된 사용자에 대한 검증
+    // 중복된 사용자에 대한 검증 (수정됨: null이 아닐 때 에러)
     private void checkUsernameExists(String username) {
         Users user = usersRepository.findByUsername(username);
-        if (user != null) {
+        if (user != null) { // 유저가 존재하면 중복이므로 에러!
             throw new GeneralException(AuthException.ALREADY_EXIST_USER_ID_BAD_REQUEST);
         }
     }
 
-    //ID/PW 형식 검증
+    // ID/PW 형식 검증
     private void checkUserIdAndPassword(String username, String password) {
-        Users user = usersRepository.findByUsername(username);
-        //ID 검증
-        if (user.equals("")) {
+        // 영문, 숫자, 특수문자를 포함한 8자 이상 정규표현식
+        String passwordPattern = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$";
+
+        // ID 검증 (빈 문자열 체크)
+        if (username == null || username.trim().isEmpty()) {
             throw new GeneralException(AuthException.WRONG_USER_FORM_BAD_REQUEST);
         }
-        //PW 검증
-        if (password.length() < 8) {
+
+        // PW 검증 (길이 + 정규식 체크)
+        if (password == null || !password.matches(passwordPattern)) {
             throw new GeneralException(AuthException.WRONG_USER_FORM_BAD_REQUEST);
         }
     }
