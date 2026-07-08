@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 @Component
 @RequiredArgsConstructor
-public class YouthCenterExtractor implements BenefitsExtractor {
+public class YouthCenterBenefitsExtractor implements BenefitsExtractor {
     // 금액 추출 패턴: "12만 원", "100만원" 등
     private static final Pattern AMOUNT_PATTERN = Pattern.compile("(\\d+)(만)?\\s*원");
     // 날짜 추출 패턴: "YYYYMMDD ~ YYYYMMDD" 에서 뒤쪽 날짜=

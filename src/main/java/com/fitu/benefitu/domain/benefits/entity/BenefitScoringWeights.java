@@ -17,15 +17,15 @@ public class BenefitScoringWeights {
 
     // 혜택 ID
     @JoinColumn
-    @ManyToOne
+    @OneToOne
     private Benefits benefitId;
 
     // 학교 명
     @Enumerated(EnumType.STRING)
     private SchoolType schoolType;
 
-    // 학과 ID
-    private Integer departmentId;
+    // 학과
+    private SchoolType.Department departmentType;
 
     // 점수
     private Integer grade;
@@ -33,7 +33,7 @@ public class BenefitScoringWeights {
     // 최소 연령
     private Integer minAge;
 
-    // 쵀대 연령
+    // 최대 연령
     private Integer maxAge;
 
     // 거주 지역(도 단위)
