@@ -1,6 +1,8 @@
 package com.fitu.benefitu.domain.users.entity;
 
 import com.fitu.benefitu.domain.users.dto.AuthSignupRequest;
+import com.fitu.benefitu.domain.users.dto.BaseInfoDto;
+import com.fitu.benefitu.domain.users.dto.UsersSubmitInfoRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

@@ -28,7 +28,7 @@ public class UsersDetails {
 
     public static UsersDetails createUsersDetails(UsersSubmitInfoRequest request, Users user) {
         UsersDetails details = new UsersDetails();
-        details.gpa = request.detailInfo().gpa().floatValue();
+        details.gpa = request.detailInfo().gpa().floatValue(); // Double -> Float 변환
         details.incomeBracket = request.detailInfo().incomeBracket();
         details.isBasicLiving = request.detailInfo().isBasicLiving();
         details.isSecondLowest = request.detailInfo().inSecondLowest();

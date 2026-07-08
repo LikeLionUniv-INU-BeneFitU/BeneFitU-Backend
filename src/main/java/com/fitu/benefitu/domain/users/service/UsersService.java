@@ -67,7 +67,7 @@ public class UsersService {
         Users user = usersRepository.findByUsername((username));
         //1. 검증
 
-        // 학년 검증(1~5학년 검증)
+        // 학년 검증(1~5학년 검증) **낮에 나온 의견 보고 수정하기
         if (response.baseInfo().grade() < 1 || response.baseInfo().grade() > 5) {
             throw new GeneralException(AuthException.INVALID_GRADE_BAD_REQUEST);
         }
