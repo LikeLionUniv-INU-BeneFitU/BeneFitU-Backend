@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -104,6 +106,43 @@ public class UsersService {
 
         return new UsersSubmitInfoResponse(response.baseInfo(),detailInfoResponse);
 
+    }
+
+    @Transactional(readOnly = true)
+    public UsersInfoResponse getUserInfo(String username) {
+        Users user = usersRepository.findByUsername(username);
+        if (user == null) {
+            throw new GeneralException(AuthException.WRONG_USER_FORM_BAD_REQUEST);
+        }
+
+        UsersDetails usersDetails = usersDetailsRepository.findByUserId(user)
+                .orElseThrow(() -> new GeneralException(AuthException.WRONG_USER_FORM_BAD_REQUEST));
+
+        List<UsersInterests> interestsList = usersInterestsRepository.findAllByUser(user);
+
+
+        List<String> interests = interestsList.stream()
+                .map(UsersInterests::getCategory)
+                .toList();
+
+        BaseInfoResponseDto baseInfo = new BaseInfoResponseDto(
+                user.getName(),
+                user.getSchoolName(),
+                user.getDepartment(),
+                user.getGrade(),
+                user.getResidence(),
+                user.getBirthDate()
+        );
+
+        DetailInfoResponse detailInfo = new DetailInfoResponse(
+                usersDetails.getGpa(),
+                usersDetails.getIncomeBracket(),
+                usersDetails.getIsBasicLiving(),
+                usersDetails.getIsSecondLowest(),
+                user.getId()
+        );
+
+        return new UsersInfoResponse(baseInfo, detailInfo);
     }
 
 }

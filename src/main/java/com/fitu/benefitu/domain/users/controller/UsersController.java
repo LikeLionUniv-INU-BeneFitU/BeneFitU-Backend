@@ -29,4 +29,15 @@ public class UsersController {
         return ResponseEntity.ok(ApiResponse.success(response));
 
     }
+
+    @GetMapping("/info")
+    public ResponseEntity<ApiResponse<UsersInfoResponse>> getUserInfo(
+            @AuthenticationPrincipal String username
+    ) {
+
+        UsersInfoResponse response = usersService.getUserInfo(username);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+
 }
