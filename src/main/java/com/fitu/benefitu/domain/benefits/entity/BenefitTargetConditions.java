@@ -27,7 +27,7 @@ public class BenefitTargetConditions {
     // 학과
     private SchoolType.Department departmentType;
 
-    // 점수
+    // 학년(최소 학년)
     private Integer grade;
 
     // 최소 연령

@@ -32,14 +32,19 @@ public class ExtractEngine {
     }
 
     public BenefitTargetConditions extractBenefitTargetConditions(RawBenefit rawBenefit, Benefits benefitId) {
+        Integer grade = youthCenterBenefitScoringWeightsExtractor.extractGrade(rawBenefit);
+        // 대학생이 접근할 수 없는 혜택일 경우
+        if (grade == null) {
+            return null;
+        }
         return BenefitTargetConditions.builder()
                 .benefitId(benefitId)
-                .schoolType(youthCenterBenefitScoringWeightsExtractor.extractorSchoolType(rawBenefit))
-                .departmentType(youthCenterBenefitScoringWeightsExtractor.extractorDepartment(rawBenefit))
-                .grade(youthCenterBenefitScoringWeightsExtractor.extractorGrade(rawBenefit))
-                .minAge(youthCenterBenefitScoringWeightsExtractor.extractorMinAge(rawBenefit))
-                .maxAge(youthCenterBenefitScoringWeightsExtractor.extractorMaxAge(rawBenefit))
-                .residenceType(youthCenterBenefitScoringWeightsExtractor.extractorResidenceType(rawBenefit))
+                .schoolType(youthCenterBenefitScoringWeightsExtractor.extractSchoolType(rawBenefit))
+                .departmentType(youthCenterBenefitScoringWeightsExtractor.extractDepartment(rawBenefit))
+                .grade(grade)
+                .minAge(youthCenterBenefitScoringWeightsExtractor.extractMinAge(rawBenefit))
+                .maxAge(youthCenterBenefitScoringWeightsExtractor.extractMaxAge(rawBenefit))
+                .residenceType(youthCenterBenefitScoringWeightsExtractor.extractResidenceType(rawBenefit))
                 .build();
     }
 }
