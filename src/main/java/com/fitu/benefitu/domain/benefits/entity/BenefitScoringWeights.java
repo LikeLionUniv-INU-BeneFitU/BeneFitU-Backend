@@ -5,8 +5,6 @@ import com.fitu.benefitu.domain.benefits.types.SchoolType;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Entity
 @Builder
 @Getter
@@ -32,8 +30,11 @@ public class BenefitScoringWeights {
     // 점수
     private Integer grade;
 
-    // 최소 연령 - 생년월일
-    private LocalDate birthDate;
+    // 최소 연령
+    private Integer minAge;
+
+    // 쵀대 연령
+    private Integer maxAge;
 
     // 거주 지역(도 단위)
     @Enumerated(EnumType.STRING)

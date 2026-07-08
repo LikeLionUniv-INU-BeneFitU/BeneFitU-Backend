@@ -1,9 +1,10 @@
 package com.fitu.benefitu.domain.benefits.batch.module;
 
-import javax.swing.text.StyledEditorKit;
-import java.util.List;
+import com.fitu.benefitu.domain.benefits.types.ExtractorId;
+import com.fitu.benefitu.domain.benefits.types.ResidenceType;
 
 public interface BenefitsFetcher {
-    public boolean hasNextPage();
-    public List<RawBenefit>  fetchBenefits(int pageNumber, int pageSize);
+    public boolean hasNextPage(FetchedResults fetchedResults);
+
+    public FetchedResults fetchBenefits(ExtractorId extractorId, ResidenceType residenceType, int pageNumber, int pageSize);
 }

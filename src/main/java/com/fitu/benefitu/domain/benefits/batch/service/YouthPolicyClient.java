@@ -1,6 +1,7 @@
 package com.fitu.benefitu.domain.benefits.batch.service;
 
 import com.fitu.benefitu.domain.benefits.batch.module.youthcenter.dto.YouthPolicyApiResponse;
+import com.fitu.benefitu.domain.benefits.types.ResidenceType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,6 +26,7 @@ public class YouthPolicyClient {
                         .queryParam("rtnType", "json")
                         .queryParam("pageNum", page)
                         .queryParam("pageSize", size)
+                        .queryParam("zip", ResidenceType.INCHEON.getResidenceCode())
                         .build())
                 .retrieve()
                 .bodyToMono(YouthPolicyApiResponse.class)
