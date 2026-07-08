@@ -5,6 +5,7 @@ import com.fitu.benefitu.domain.benefits.types.ExtractorId;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,8 +37,8 @@ public class Benefits {
     private BenefitStatus status;
 
     // 해당 혜택 마감일
-    private LocalDateTime deadLine;
+    private LocalDate deadLine;
 
-    // DB 가져온 날
+    // 패치한 날
     private LocalDateTime fetchedAt;
 }

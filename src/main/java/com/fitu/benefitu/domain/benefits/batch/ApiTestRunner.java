@@ -1,9 +1,6 @@
 package com.fitu.benefitu.domain.benefits.batch;
 
 import com.fitu.benefitu.domain.benefits.batch.engine.FetchEngine;
-import com.fitu.benefitu.domain.benefits.batch.module.RawBenefit;
-import com.fitu.benefitu.domain.benefits.batch.service.YouthPolicyClient;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +24,7 @@ public class ApiTestRunner implements CommandLineRunner {
                 System.out.println("[정책명]          : " + r.BenefitName());
                 System.out.println("[정책 설명]         : " + r.contents());
                 System.out.println("[신청 URL]        : " + r.BenefitUrl());
-                System.out.println("[신청 기간 유뮤]         : " + r.hasDeadLine());
+                System.out.println("[신청 기간 코드]         : " + r.deadLineCode());
                 System.out.println("[신청 기간]         : " + r.deadLine());
                 System.out.println("[정책 제공방법]: " + r.applyWay());
                 System.out.println("[학교]: " + r.schoolType());

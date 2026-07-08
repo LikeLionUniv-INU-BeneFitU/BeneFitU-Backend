@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class BenefitMapper {
     public Benefits toEntity(YouthPolicyApiResponse.YouthPolicy apiData) {
         return Benefits.builder()
-                .status(BenefitStatus.SAFE)
+                .status(BenefitStatus.SAFE_SCOPED)
                 // deadLine은 String -> LocalDateTime 파싱 로직 필요
                 .deadLine(parseDate(apiData.getBizPrdEndYmd()))
                 .build();

@@ -13,7 +13,7 @@ public record RawBenefit(
         // 신청 url
         String BenefitUrl,
         // 신청 기간 유무
-        boolean hasDeadLine,
+        String deadLineCode,
         // 신청 기간
         String deadLine,
         // 제공 방법 -> 카테고리 활용 & 금액 유무 판단
@@ -50,7 +50,6 @@ public record RawBenefit(
         String aplyPrdSeCd = (dto.getAplyPrdSeCd() != null) ? dto.getAplyPrdSeCd() : "";
 
         // 2. 신청 기간 로직
-        boolean hasDeadLine = "0057001".equals(aplyPrdSeCd);
         String deadLine = (dto.getAplyYmd() != null && !dto.getAplyYmd().isEmpty())
                 ? dto.getAplyYmd()
                 : dto.getBizPrdEndYmd();
@@ -73,7 +72,7 @@ public record RawBenefit(
                 (dto.getPlcyExplnCn() != null ? dto.getPlcyExplnCn() : "") + "\n" +
                         (dto.getEtcMttrCn() != null ? dto.getEtcMttrCn() : ""),
                 dto.getAplyUrlAddr(),
-                hasDeadLine,
+                aplyPrdSeCd,
                 deadLine,
                 dto.getPlcyPvsnMthdCd(),
                 SchoolType.STANDARD, // 필요시 별도 파싱 로직 추가

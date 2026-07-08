@@ -24,10 +24,10 @@ public class FetchEngine {
                 int pageNum = 1;
                 int pageSize = 50;
 
-                // 1. 지역별 호출 전 0.5초 대기 (서버에 예의 갖추기)
+                // 1. 지역별 호출 전 0.5초 대기
                 Thread.sleep(500);
 
-                // 첫 페이지 호출 (재시도 로직 포함)
+                // 첫 페이지 호출
                 FetchedResults results = fetchWithRetry(ExtractorId.YOUTH_CENTER, region, pageNum, pageSize);
                 if (results != null) {
                     rawBenefits.addAll(results.benefits());
