@@ -1,8 +1,10 @@
 package com.fitu.benefitu.domain.benefits.entity;
 
-import com.fitu.benefitu.domain.benefits.types.ResidenceType;
-import com.fitu.benefitu.domain.benefits.types.SchoolType;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
 
 @Entity
@@ -15,28 +17,15 @@ public class BenefitScoringWeights {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 혜택 ID
-    @JoinColumn
-    @OneToOne
-    private Benefits benefitId;
+    // 학점
+    private Float gpa;
 
-    // 학교 명
-    @Enumerated(EnumType.STRING)
-    private SchoolType schoolType;
+    // 소득 순위
+    private Integer incomeBracket;
 
-    // 학과
-    private SchoolType.Department departmentType;
+    // 기초 생활 수급자 여부
+    private Boolean isBasicLiving;
 
-    // 점수
-    private Integer grade;
-
-    // 최소 연령
-    private Integer minAge;
-
-    // 최대 연령
-    private Integer maxAge;
-
-    // 거주 지역(도 단위)
-    @Enumerated(EnumType.STRING)
-    private ResidenceType residenceType;
+    // 차상위 계층 여부
+    private Boolean isSecondLowest;
 }

@@ -3,7 +3,7 @@ package com.fitu.benefitu.domain.benefits.batch.module;
 import com.fitu.benefitu.domain.benefits.types.ResidenceType;
 import com.fitu.benefitu.domain.benefits.types.SchoolType;
 
-public interface BenefitsScoringWeightsExtractor {
+public interface BenefitsTargetConditionsExtractor {
     // 학교
     public SchoolType extractorSchoolType(RawBenefit rawBenefit);
     // 학과

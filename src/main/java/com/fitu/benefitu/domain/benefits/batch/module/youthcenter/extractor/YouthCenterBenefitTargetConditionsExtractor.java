@@ -1,13 +1,13 @@
 package com.fitu.benefitu.domain.benefits.batch.module.youthcenter.extractor;
 
-import com.fitu.benefitu.domain.benefits.batch.module.BenefitsScoringWeightsExtractor;
+import com.fitu.benefitu.domain.benefits.batch.module.BenefitsTargetConditionsExtractor;
 import com.fitu.benefitu.domain.benefits.batch.module.RawBenefit;
 import com.fitu.benefitu.domain.benefits.types.ResidenceType;
 import com.fitu.benefitu.domain.benefits.types.SchoolType;
 import org.springframework.stereotype.Component;
 
 @Component
-public class YouthCenterBenefitScoringWeightsExtractor implements BenefitsScoringWeightsExtractor {
+public class YouthCenterBenefitTargetConditionsExtractor implements BenefitsTargetConditionsExtractor {
     @Override
     public SchoolType extractorSchoolType(RawBenefit rawBenefit) {
         return rawBenefit.schoolType();

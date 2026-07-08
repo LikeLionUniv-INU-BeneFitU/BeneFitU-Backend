@@ -1,10 +1,8 @@
 package com.fitu.benefitu.domain.benefits.entity;
 
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fitu.benefitu.domain.benefits.types.ResidenceType;
+import com.fitu.benefitu.domain.benefits.types.SchoolType;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -17,15 +15,28 @@ public class BenefitTargetConditions {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 학점
-    private Float gpa;
+    // 혜택 ID
+    @JoinColumn
+    @OneToOne
+    private Benefits benefitId;
 
-    // 소득 순위
-    private Integer incomeBracket;
+    // 학교 명
+    @Enumerated(EnumType.STRING)
+    private SchoolType schoolType;
 
-    // 기초 생활 수급자 여부
-    private Boolean isBasicLiving;
+    // 학과
+    private SchoolType.Department departmentType;
 
-    // 차상위 계층 여부
-    private Boolean isSecondLowest;
+    // 점수
+    private Integer grade;
+
+    // 최소 연령
+    private Integer minAge;
+
+    // 최대 연령
+    private Integer maxAge;
+
+    // 거주 지역(도 단위)
+    @Enumerated(EnumType.STRING)
+    private ResidenceType residenceType;
 }

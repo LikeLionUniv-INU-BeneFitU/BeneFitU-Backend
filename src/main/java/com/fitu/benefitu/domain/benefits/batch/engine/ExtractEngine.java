@@ -2,9 +2,9 @@ package com.fitu.benefitu.domain.benefits.batch.engine;
 
 import com.fitu.benefitu.domain.benefits.batch.module.BenefitsExtractor;
 import com.fitu.benefitu.domain.benefits.batch.module.RawBenefit;
-import com.fitu.benefitu.domain.benefits.batch.module.youthcenter.extractor.YouthCenterBenefitScoringWeightsExtractor;
+import com.fitu.benefitu.domain.benefits.batch.module.youthcenter.extractor.YouthCenterBenefitTargetConditionsExtractor;
 import com.fitu.benefitu.domain.benefits.batch.module.youthcenter.extractor.YouthCenterBenefitsExtractor;
-import com.fitu.benefitu.domain.benefits.entity.BenefitScoringWeights;
+import com.fitu.benefitu.domain.benefits.entity.BenefitTargetConditions;
 import com.fitu.benefitu.domain.benefits.entity.Benefits;
 import com.fitu.benefitu.domain.benefits.types.BenefitStatus;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ExtractEngine {
     private final YouthCenterBenefitsExtractor youthCenterBenefitsExtractor;
-    private final YouthCenterBenefitScoringWeightsExtractor youthCenterBenefitScoringWeightsExtractor;
+    private final YouthCenterBenefitTargetConditionsExtractor youthCenterBenefitScoringWeightsExtractor;
 
     public Benefits extractBenefits(RawBenefit rawBenefit) {
         BenefitsExtractor.DeadlineResult deadline = youthCenterBenefitsExtractor.extractDeadLine(rawBenefit);
@@ -31,8 +31,8 @@ public class ExtractEngine {
 
     }
 
-    public BenefitScoringWeights extractBenefitScoringWeights(RawBenefit rawBenefit, Benefits benefitId) {
-        return BenefitScoringWeights.builder()
+    public BenefitTargetConditions extractBenefitTargetConditions(RawBenefit rawBenefit, Benefits benefitId) {
+        return BenefitTargetConditions.builder()
                 .benefitId(benefitId)
                 .schoolType(youthCenterBenefitScoringWeightsExtractor.extractorSchoolType(rawBenefit))
                 .departmentType(youthCenterBenefitScoringWeightsExtractor.extractorDepartment(rawBenefit))
