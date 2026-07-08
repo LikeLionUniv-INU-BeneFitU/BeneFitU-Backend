@@ -42,11 +42,12 @@ public class YouthCenterFethcher implements BenefitsFetcher {
                         .queryParam("rtnType", "json")
                         .queryParam("pageNum", pageNumber)
                         .queryParam("pageSize", pageSize)
-                        .queryParam("zipCd", residenceType.getResidenceCode())
+                        .queryParam("pageType", "1") // 1: 목록 모드 추가!
+                        .queryParam("zipCd", residenceType.getResidenceCode()) // 만약 여러 개라면 "코드1,코드2" 형식 확인 필요
                         .build())
                 .retrieve()
                 .bodyToMono(YouthPolicyApiResponse.class)
-                .block(); // 동기식 처리 (배치니까 가능!)
+                .block();
         return response != null ? response.toFetchedResults(extractorId, residenceType) : null;
     }
 }

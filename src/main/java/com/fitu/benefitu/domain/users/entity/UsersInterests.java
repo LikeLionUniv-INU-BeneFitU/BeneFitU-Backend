@@ -16,15 +16,15 @@ public class UsersInterests {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn
+    @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Users userId;
+    private Users user;
 
     private String category;
 
     public static UsersInterests createUsersInterests(UsersSubmitInfoRequest request, Users user) {
         UsersInterests interests = new UsersInterests();
-        interests.userId = user;
+        interests.user = user;
 
         String categoryString = "Corporate: " + request.detailInfo().Interests().corporate() +
                 ", Region: " + request.detailInfo().Interests().region() +

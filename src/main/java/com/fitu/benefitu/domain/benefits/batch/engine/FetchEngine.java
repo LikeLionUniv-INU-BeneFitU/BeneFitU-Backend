@@ -22,22 +22,47 @@ public class FetchEngine {
         for (ResidenceType region : ResidenceType.values()) {
             try {
                 int pageNum = 1;
-                int pageSize = 100;
+                int pageSize = 50;
 
-                // 첫 페이지 호출
-                FetchedResults results = youthCenterFethcher.fetchBenefits(ExtractorId.YOUTH_CENTER, region, pageNum, pageSize);
-                rawBenefits.addAll(results.benefits());
+                // 1. 지역별 호출 전 0.5초 대기 (서버에 예의 갖추기)
+                Thread.sleep(500);
 
-                // 다음 페이지가 있다면 순회
-                while (youthCenterFethcher.hasNextPage(results)) {
-                    pageNum++; // 페이지 번호 증가
-                    results = youthCenterFethcher.fetchBenefits(ExtractorId.YOUTH_CENTER, region, pageNum, pageSize);
-                    rawBenefits.addAll(results.benefits()); // 결과 병합
+                // 첫 페이지 호출 (재시도 로직 포함)
+                FetchedResults results = fetchWithRetry(ExtractorId.YOUTH_CENTER, region, pageNum, pageSize);
+                if (results != null) {
+                    rawBenefits.addAll(results.benefits());
+
+                    // 다음 페이지 순회
+                    while (youthCenterFethcher.hasNextPage(results)) {
+                        pageNum++;
+                        Thread.sleep(300); // 페이지 간에도 약간의 여유
+                        results = fetchWithRetry(ExtractorId.YOUTH_CENTER, region, pageNum, pageSize);
+                        if (results == null) break;
+                        rawBenefits.addAll(results.benefits());
+                    }
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // 인터럽트 처리
+                System.err.println("배치 작업이 중단되었습니다.");
             } catch (Exception e) {
-                System.err.println("지역 데이터 패치 실패 [" + region + "]: " + e.getMessage());
+                System.err.println("지역 데이터 패치 최종 실패 [" + region + "]: " + e.getMessage());
             }
         }
         return rawBenefits;
+    }
+
+    // 재시도 로직을 가진 별도 메서드
+    private FetchedResults fetchWithRetry(ExtractorId id, ResidenceType region, int page, int size) throws Exception {
+        int retryCount = 0;
+        while (retryCount < 3) { // 최대 3번 재시도
+            try {
+                return youthCenterFethcher.fetchBenefits(id, region, page, size);
+            } catch (Exception e) {
+                retryCount++;
+                System.err.println("호출 실패, 재시도 중... [" + retryCount + "] " + region);
+                Thread.sleep(1000 * retryCount); // 재시도할수록 대기 시간 증가 (Exponential Backoff)
+            }
+        }
+        throw new Exception("3회 재시도 후에도 실패");
     }
 }
