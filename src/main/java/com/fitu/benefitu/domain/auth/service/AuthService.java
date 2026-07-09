@@ -10,6 +10,7 @@ import com.fitu.benefitu.domain.users.repository.UsersInterestsRepository;
 import com.fitu.benefitu.domain.users.repository.UsersRepository;
 import com.fitu.benefitu.global.error.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,18 +21,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthService {
     private final UsersRepository usersRepository;
-
-    private final UsersDetailsRepository usersDetailsRepository;
-    private final UsersInterestsRepository usersInterestsRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public AuthSignupResponse signup(AuthSignupRequest request) {
         //1. 검증
         checkUsernameExists(request.username());
         checkUserIdAndPassword(request.username(), request.password());
+        String encodedPassword = passwordEncoder.encode(request.password());
 
         //2. 저장
         //Users 객체 생성
-        Users user = Users.createUsers(request);
+        Users user = Users.createUsers(request.username(), encodedPassword);
         //DB 저장
         usersRepository.save(user);
 
