@@ -31,3 +31,9 @@ springdoc:
     path: /swagger-ui.html
     operations-sorter: method
     tags-sorter: alpha
+
+# 2026.7.7 이후 설정들
+# [5] 공공 api 키 설정
+api:
+  youth-center:
+    key: ${YOUTH_CENTER_API_KEY:default_key} # 환경 변수가 없으면 default_key 사용

@@ -16,15 +16,15 @@ public class UsersInterests {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn
+    @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Users userId;
+    private Users user;
 
     private String category;
 
     public static UsersInterests createUsersInterests(UsersSubmitInfoRequest request, Users user) {
         UsersInterests interests = new UsersInterests();
-        interests.userId = user;
+        interests.user = user;
 
         // 💡 DTO의 InterestsDto 내용을 쉼표 등으로 구분된 하나의 문자열(String)로 변환하여 category에 저장
         // 예시: "corporate, region, state" 형태로 묶기
