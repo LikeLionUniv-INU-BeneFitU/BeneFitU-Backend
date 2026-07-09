@@ -1,5 +1,8 @@
-package com.fitu.benefitu.global.config.auth;
+package com.fitu.benefitu.domain.auth.controller;
 
+import com.fitu.benefitu.domain.users.entity.Users;
+import com.fitu.benefitu.domain.users.repository.UsersRepository;
+import com.fitu.benefitu.global.config.auth.JwtProvider;
 import com.fitu.benefitu.global.response.ApiResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,24 +18,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
+    private final UsersRepository usersRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider; // JWT 토큰 발행용 컴포넌트
 
+    // AuthController.java
     @PostMapping("/login")
     public ApiResponse<LoginResponse> login(@RequestBody LoginRequest request) {
-        // 1. 프론트가 보낸 JSON 데이터를 시큐리티 인증 토큰으로 변환
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
+        // 1. 인증 위임 (검증 및 인증 객체 생성)
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        );
 
-        // 2. CustomUserDetailsService의 loadUserByUsername이 여기서 실행된다.
-        // 만일 에러 발생하면, 여기서 GeneralException이 터져서 전역 핸들러로 감!
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        // 2. 인증된 객체에서 username을 추출 (DB에서 안전하게 다시 조회)
+        Users user = usersRepository.findByUsername(authentication.getName());
 
-        // 3. 인증 성공 시 JWT 토큰 발행
-        // 토큰 만료 기간 : 7 일
-        long expiry = 3600L * 24 * 7;
-        String accessToken = jwtProvider.createToken(authentication, expiry);
+        // 3. 토큰 발행
+        String accessToken = jwtProvider.createToken(authentication, 3600L * 24 * 7, user.getId());
 
         return ApiResponse.success(new LoginResponse(accessToken));
     }

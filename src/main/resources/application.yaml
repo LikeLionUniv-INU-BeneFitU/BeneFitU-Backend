@@ -37,3 +37,7 @@ springdoc:
 api:
   youth-center:
     key: ${YOUTH_CENTER_API_KEY:default_key} # 환경 변수가 없으면 default_key 사용
+
+logging:
+  level:
+    org.springframework.security: DEBUG

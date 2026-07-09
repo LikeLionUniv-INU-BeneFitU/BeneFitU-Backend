@@ -13,7 +13,7 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class JwtProvider {
     private final JwtEncoder jwtEncoder;
-    public String createToken(Authentication authentication, long expiry) {
+    public String createToken(Authentication authentication, long expiry, long userId) {
         // 이슈일 : 생성일
         Instant now;
         now = Instant.now();
@@ -25,6 +25,7 @@ public class JwtProvider {
                 .expiresAt(now.plusSeconds(expiry))
                 .subject(authentication.getName())
                 .claim("scope", "USER")
+                .claim("userId", userId)
                 .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
