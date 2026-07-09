@@ -3,36 +3,41 @@ package com.fitu.benefitu.mockapi.benefits;
 import com.fitu.benefitu.global.response.ApiResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/benefits")
 public class Mock12thApiController {
 
     /**
-     * (12) 특정 혜택 신청 완료 처리 - 완벽 모킹(Mocking)
+     * (12) 특정 혜택 신청 상태 변경 처리
      * - POST /api/benefits/{benefitId}/apply
-     * - PathVariable로 받은 benefitId를 신청 완료 처리하고, 결과로 해당 ID를 그대로 반환합니다.
+     * - PathVariable로 benefitId, RequestBody로 applyStatus를 받아 상태 변경 처리
      */
-    @GetMapping("/{benefitId}/apply")
+    @PostMapping("/{benefitId}/apply")
     public ApiResponse<BenefitApplyResponse> applyBenefit(
-            @PathVariable("benefitId") Long benefitId
+            @PathVariable("benefitId") Long benefitId,
+            @RequestBody ApplyRequest request
     ) {
-        // 실제 로직 시: userDetails.getUsername() 엔티티와 benefitId를 매핑하는
-        // 다대다(N:M) 중간 테이블(예: UserBenefit)에 매핑 데이터를 Insert(저장)하는 로직 수행
+        // 실제 로직 시: 요청받은 applyStatus(UNDER_REVIEW, SELECTED, NOT_SELECTED 등)를
+        // 유저와 혜택 매핑 테이블에 업데이트하는 로직 수행
 
-        // 명세서 성공 응답(200 OK) 규격에 맞춰 요청받은 혜택 ID를 그대로 결과에 담아 반환
+        // 명세서 규격에 맞춰 처리된 혜택 ID 반환
         BenefitApplyResponse response = new BenefitApplyResponse(benefitId);
 
         return ApiResponse.success(response);
     }
 
+    // --- 요청 객체 ---
+    @Getter
+    public static class ApplyRequest {
+        private String applyStatus; // 신청 상태 (UNDER_REVIEW, SELECTED, NOT_SELECTED)
+    }
+
+    // --- 응답 객체 ---
     @Getter
     @RequiredArgsConstructor
     public static class BenefitApplyResponse {
-        private final Long appliedBenefitId; // 신청 완료 처리된 혜택 ID 규격 준수
+        private final Long appliedBenefitId;
     }
 }

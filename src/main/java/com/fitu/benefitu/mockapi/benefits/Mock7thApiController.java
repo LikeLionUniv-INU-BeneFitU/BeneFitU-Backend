@@ -19,10 +19,6 @@ import java.util.List;
 @RequestMapping("/api/benefits")
 public class Mock7thApiController {
 
-    /**
-     * (7) 조건별 혜택 목록 필터링/정렬 조회 - 완벽 모킹(Mocking)
-     * - @RequestParam에 defaultValue를 주어 미지정 시 기본값(ALL, DEFAULT, 0)이 주입되도록 설계
-     */
     @GetMapping
     public ApiResponse<BenefitListResponse> getBenefits(
             @AuthenticationPrincipal UserDetails userDetails,
@@ -30,37 +26,16 @@ public class Mock7thApiController {
             @RequestParam(value = "sort", defaultValue = "DEFAULT") String sort,
             @RequestParam(value = "page", defaultValue = "0") int page
     ) {
-        // 실제 로직 시: userDetails.getUsername()으로 신청 완료 혜택 테이블을 서브쿼리나 Join 조건(Not In)으로 걷어내고 Dynamic Query(QueryDSL) 가동
+        // 1. 데이터 셋업 (문서 예시에 맞춰 amount를 String으로 구성)
+        List<BenefitInfo> allBenefits = Arrays.asList(
+                BenefitInfo.builder().benefitId(12L).benefitName("푸른등대 주거안정 장학금").categories(Arrays.asList("STATE")).dDay("D-5").amount("최대 2400000원").build(),
+                BenefitInfo.builder().benefitId(15L).benefitName("지자체 대학생 교내 행정 근로").categories(Arrays.asList("REGION", "REQUIREMENTS")).dDay("D-12").amount("최대 1200000원").build(),
+                BenefitInfo.builder().benefitId(18L).benefitName("컴퓨터공학과 SW 경진대회 지원 사업").categories(Arrays.asList("CORPORATE")).dDay("상시모집").amount("최대 500000원").build()
+        );
 
-        // 1. 전체 가상 혜택 데이터 마스터 셋업
-        BenefitInfo item1 = BenefitInfo.builder()
-                .benefitId(12L)
-                .benefitName("푸른등대 주거안정 장학금")
-                .categories(Arrays.asList("SCHOLARSHIP"))
-                .dDay("D-5")
-                .amount(2400000L)
-                .build();
-
-        BenefitInfo item2 = BenefitInfo.builder()
-                .benefitId(15L)
-                .benefitName("지자체 대학생 교내 행정 근로")
-                .categories(Arrays.asList("CAMPUS_WORK", "YOUTH_SUPPORT"))
-                .dDay("D-12")
-                .amount(1200000L)
-                .build();
-
-        BenefitInfo item3 = BenefitInfo.builder()
-                .benefitId(18L)
-                .benefitName("컴퓨터공학과 SW 경진대회 지원 사업")
-                .categories(Arrays.asList("EXTERNAL_ACTIVITY"))
-                .dDay("상시모집")
-                .amount(500000L)
-                .build();
-
-        List<BenefitInfo> allBenefits = Arrays.asList(item1, item2, item3);
         List<BenefitInfo> filteredList = new ArrayList<>();
 
-        // 2. [카테고리 필터 모킹 구동]
+        // 2. 카테고리 필터링
         if ("ALL".equalsIgnoreCase(category)) {
             filteredList.addAll(allBenefits);
         } else {
@@ -71,20 +46,24 @@ public class Mock7thApiController {
             }
         }
 
-        // 3. [정렬 조건 모킹 구동]
+        // 3. 정렬 조건 적용 (숫자 추출을 위해 amount 문자열에서 숫자만 파싱)
         if ("AMOUNT_HIGH".equalsIgnoreCase(sort)) {
-            // 금액 높은 순 정렬 (240만 -> 120만 -> 50만)
-            filteredList.sort((a, b) -> b.getAmount().compareTo(a.getAmount()));
+            filteredList.sort((a, b) -> extractAmount(b.getAmount()).compareTo(extractAmount(a.getAmount())));
         } else if ("DEADLINE_IMMINENT".equalsIgnoreCase(sort)) {
-            // 마감 임박순 정렬 (D-5 -> D-12 -> 상시모집)
-            // 모킹을 위해 item1, item2, item3 순서 강제 유지
-            filteredList.sort((a, b) -> a.getBenefitId().compareTo(b.getBenefitId()));
+            filteredList.sort((a, b) -> {
+                if (a.getDDay().equals("상시모집")) return 1;
+                if (b.getDDay().equals("상시모집")) return -1;
+                return a.getDDay().compareTo(b.getDDay());
+            });
         }
 
-        // 4. 최종 결과 바디 응답
         return ApiResponse.success(new BenefitListResponse(filteredList));
     }
 
+    // 문자열에서 숫자만 추출하는 헬퍼 메서드
+    private Long extractAmount(String amountStr) {
+        return Long.parseLong(amountStr.replaceAll("[^0-9]", ""));
+    }
 
     @Getter
     @RequiredArgsConstructor
@@ -99,6 +78,6 @@ public class Mock7thApiController {
         private String benefitName;
         private List<String> categories;
         private String dDay;
-        private Long amount; // 원화 금액
+        private String amount; // API 명세서에 따라 String 타입으로 변경
     }
 }

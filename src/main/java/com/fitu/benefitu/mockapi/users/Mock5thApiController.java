@@ -1,50 +1,48 @@
 package com.fitu.benefitu.mockapi.users;
 
 import com.fitu.benefitu.global.response.ApiResponse;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
 public class Mock5thApiController {
 
-    /**
-     * (5) 사용자 정보 수정(갱신) - 완벽 모킹(Mocking)
-     * - PUT /api/users/info 경로로 요청을 받아 기존 정보를 업데이트하는 형상입니다.
-     * - 409 예외 없이, 성공 응답과 400 상세 입력값 오류 검증 분기만 명세대로 깔끔하게 처리합니다.
-     */
-    @PatchMapping("/info") // 혹은 팀의 갱신 엔드포인트 명세에 맞춰 경로 수정 가능
+    @PatchMapping("/info")
     public ApiResponse<?> updateUserInfo(
             @RequestBody UserInfoRequest request
     ) {
-        // 실제 로직 시: userDetails.getUsername() 기반으로 기존 USERS, USER_DETAILS 테이블 데이터를 Dirty Checking 등으로 수정
-
-        // [모킹 케이스] 잘못된 상세 정보 입력 테스트 (학교명에 "wrong-form" 입력 시 400 및 상세 에러 뱉기)
+        // [모킹 케이스] 잘못된 상세 정보 입력 (학교명 "wrong-form" 시 400 에러)
         if (request.getBaseInfo() != null && "wrong-form".equals(request.getBaseInfo().getSchoolName())) {
             Map<String, String> errorDetails = new HashMap<>();
             errorDetails.put("schoolName", "존재하지 않는 학교 이름입니다.");
             errorDetails.put("gpa", "학점은 0.0점에서 4.5점 사이여야 합니다.");
             errorDetails.put("incomeBracket", "소득분위는 1에서 10 사이의 정수여야 합니다.");
 
-            // 앞서 검증한 팀의 공통 fail 규격 활용
-            return ApiResponse.fail(UsersErrorCode.INVALID_USER_DETAIL, errorDetails);
+            return ApiResponse.fail(UsersErrorCode.USER_4002, errorDetails);
         }
 
-        // [정상 흐름] 수정 완료 후 갱신된 데이터를 그대로 복사해서 200 OK로 반환
-        UserInfoResponse response = new UserInfoResponse(
-                request.getBaseInfo(),
-                request.getDetailInfo()
-        );
+        // [정상 흐름] 수정 완료 후 갱신된 데이터를 그대로 반환
+        UserInfoResponse response = UserInfoResponse.builder()
+                .baseInfo(BaseInfoResponse.builder()
+                        .schoolName(request.getBaseInfo().getSchoolName())
+                        .department(request.getBaseInfo().getDepartment())
+                        .grade(request.getBaseInfo().getGrade())
+                        .residence(request.getBaseInfo().getResidence())
+                        .birthDate(request.getBaseInfo().getBirthDate()) // birthDate 반영
+                        .build())
+                .detailInfo(request.getDetailInfo())
+                .build();
 
         return ApiResponse.success(response);
     }
 
+    // --- 요청 객체 ---
     @Getter
     public static class UserInfoRequest {
         private RequestBaseInfo baseInfo;
@@ -57,7 +55,7 @@ public class Mock5thApiController {
         private String department;
         private Integer grade;
         private String residence;
-        private LocalDate birthDate;  // [년]-[월]-[일]
+        private String birthDate; // API 명세 및 요청하신 대로 생년월일(String/날짜포맷) 반영
     }
 
     @Getter
@@ -66,7 +64,7 @@ public class Mock5thApiController {
         private Integer incomeBracket;
         private Boolean isBasicLiving;
         private Boolean isSecondLowest;
-        private Mock4thApiController.InterestFields interests;
+        private InterestFields interests;
     }
 
     @Getter
@@ -77,10 +75,21 @@ public class Mock5thApiController {
         private Boolean state;
     }
 
+    // --- 응답 객체 ---
     @Getter
-    @RequiredArgsConstructor
+    @Builder
     public static class UserInfoResponse {
-        private final RequestBaseInfo baseInfo;
+        private final BaseInfoResponse baseInfo;
         private final RequestDetailInfo detailInfo;
+    }
+
+    @Getter
+    @Builder
+    public static class BaseInfoResponse {
+        private String schoolName;
+        private String department;
+        private Integer grade;
+        private String residence;
+        private String birthDate; // 응답 데이터에도 birthDate 사용
     }
 }

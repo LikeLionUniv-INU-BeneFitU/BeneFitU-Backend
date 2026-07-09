@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -24,23 +22,23 @@ public class Mock3rdApiController {
     @GetMapping("/info")
     public ApiResponse<UserInfoResponse> getUserInfo() {
 
-        // 사용자 기본 정보
+        // 1. 사용자 기본 정보 (명세서의 birthDate)
         BaseInfo baseInfo = BaseInfo.builder()
                 .name("김멋사")
                 .schoolName("인천대학교")
                 .department("컴퓨터공학부")
                 .grade(3)
                 .residence("인천 연수구")
-                .birthDate(LocalDate.of(2003, 5,14))
+                .birthDate("2002-04-30")
                 .build();
 
-        // 2. 노션 명세서 규격 100% 매핑 사용자 상세 정보
+        // 2. 사용자 상세 정보
         DetailInfo detailInfo = DetailInfo.builder()
                 .gpa(3.8f)
                 .incomeBracket(5)
                 .isBasicLiving(false)
                 .isSecondLowest(false)
-                .interests(Arrays.asList("SCHOLARSHIP", "CAMPUS_WORK", "YOUTH_SUPPORT"))
+                .interests(Arrays.asList("UNDER_REVIEW", "SELECTED", "NOT_SELECTED"))
                 .build();
 
         // 3. 최종 응답 객체 조립
@@ -48,7 +46,6 @@ public class Mock3rdApiController {
 
         return ApiResponse.success(response);
     }
-
 
     @Getter
     @RequiredArgsConstructor
@@ -62,10 +59,10 @@ public class Mock3rdApiController {
     public static class BaseInfo {
         private String name;
         private String schoolName;
-        private String department;
+        private String department; // 명세서에 따라 majorName과 혼동 주의
         private Integer grade;
         private String residence;
-        private LocalDate birthDate;  // [년]-[월]-[일]
+        private String birthDate;
     }
 
     @Getter

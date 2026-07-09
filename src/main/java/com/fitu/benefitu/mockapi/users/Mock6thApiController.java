@@ -15,52 +15,45 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class Mock6thApiController {
 
-    /**
-     * (6) 가입/설문용 학교, 전공, 지역 리스트 일괄 조회 - 완벽 모킹(Mocking)
-     * - GET /api/users/meta-data (또는 팀의 조회 엔드포인트 경로)
-     * - 셀렉트 박스 렌더링용 더미 데이터를 명세서 예시와 한 치의 오차도 없이 반환합니다.
-     */
-    @GetMapping("/meta-data") // 혹은 팀의 명세에 맞춰 /options, /setup 등으로 변경 가능
+    @GetMapping("/meta-data")
     public ApiResponse<MetaSetupResponse> getMetaSetupData() {
-        // 1. 멋사대학교 & 전공 목록 세팅
+        // 1. 학교 목록 세팅
         SchoolInfo school1 = SchoolInfo.builder()
                 .schoolId(1L)
                 .schoolName("멋사대학교")
-                .majors(Arrays.asList(
-                        new departmentInfo(101L, "컴퓨터공학과"),
-                        new departmentInfo(102L, "정보통신학과")
+                .department(Arrays.asList(
+                        new DepartmentInfo(101L, "컴퓨터공학과"),
+                        new DepartmentInfo(102L, "정보통신학과")
                 ))
                 .build();
 
-        // 2. 한국대학교 & 전공 목록 세팅
         SchoolInfo school2 = SchoolInfo.builder()
                 .schoolId(2L)
                 .schoolName("한국대학교")
-                .majors(Arrays.asList(
-                        new departmentInfo(201L, "경영학과"),
-                        new departmentInfo(202L, "경제학과"),
-                        new departmentInfo(203L, "통계학과")
+                .department(Arrays.asList(
+                        new DepartmentInfo(201L, "경영학과"),
+                        new DepartmentInfo(202L, "경제학과"),
+                        new DepartmentInfo(203L, "통계학과")
                 ))
                 .build();
 
-        // 3. 미래대학교 & 전공 목록 세팅
         SchoolInfo school3 = SchoolInfo.builder()
                 .schoolId(3L)
                 .schoolName("미래대학교")
-                .majors(Arrays.asList(
-                        new departmentInfo(301L, "시각디자인학과"),
-                        new departmentInfo(302L, "산업디자인학과")
+                .department(Arrays.asList(
+                        new DepartmentInfo(301L, "시각디자인학과"),
+                        new DepartmentInfo(302L, "산업디자인학과")
                 ))
                 .build();
 
-        // 4. 거주지역 목록 세팅
+        // 2. 거주지역 목록 세팅
         List<ResidenceInfo> residences = Arrays.asList(
                 new ResidenceInfo(1L, "서울시 강남구"),
                 new ResidenceInfo(2L, "경기도 수원시"),
                 new ResidenceInfo(3L, "인천시 부평구")
         );
 
-        // 5. 최종 결과 바디 조립
+        // 3. 최종 결과 바디 조립
         MetaSetupResponse response = new MetaSetupResponse(
                 Arrays.asList(school1, school2, school3),
                 residences
@@ -80,12 +73,12 @@ public class Mock6thApiController {
     public static class SchoolInfo {
         private Long schoolId;
         private String schoolName;
-        private List<departmentInfo> majors;
+        private List<DepartmentInfo> department; // 명세에 따라 필드명 'department'로 수정
     }
 
     @Getter
     @RequiredArgsConstructor
-    public static class departmentInfo {
+    public static class DepartmentInfo {
         private final Long departmentId;
         private final String departmentName;
     }
@@ -94,6 +87,6 @@ public class Mock6thApiController {
     @RequiredArgsConstructor
     public static class ResidenceInfo {
         private final Long residenceId;
-        private final String regionName;
+        private final String residenceName; // 명세에 따라 필드명 'residenceName'으로 수정
     }
 }

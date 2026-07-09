@@ -13,43 +13,40 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/benefits")
 public class Mock8thApiController {
 
     /**
-     * (8) 현재 사용자가 신청 완료한 혜택 내역 목록 조회 - 완벽 모킹(Mocking)
-     * - GET /api/benefits/applied
-     * - 명세서 예시 데이터와 날짜 포맷(yyyy-MM-dd)을 한 치의 오차도 없이 반환합니다.
+     * (8) 현재 사용자가 신청 완료한 혜택 내역 목록 조회
+     * - applyStatus 파라미터를 통해 신청 현황별 필터링 기능 추가
      */
     @GetMapping("/applied")
     public ApiResponse<AppliedBenefitListResponse> getAppliedBenefits(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam(value = "page", defaultValue = "0") int page
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "applyStatus", defaultValue = "ALL") String applyStatus
     ) {
-        // 실제 로직 시: userDetails.getUsername() 기반으로 유저 엔티티를 찾고,
-        // 해당 유저가 신청(USER_BENEFITS 또는 APPLIED_BENEFITS)한 내역 테이블을 페이징 조회하여 변환
-
-        // 1. 노션 명세서 예시 데이터 100% 반영한 가짜 신청 내역 생성
-        AppliedBenefitInfo applied1 = AppliedBenefitInfo.builder()
-                .benefitId(42L)
-                .benefitName("아산사회복지재단 성적우수 장학금")
-                .appliedDate("2026-07-01") // 명세 포맷 반영
-                .build();
-
-        AppliedBenefitInfo applied2 = AppliedBenefitInfo.builder()
-                .benefitId(105L)
-                .benefitName("서울시 청년 대중교통비 지원금")
-                .appliedDate("2026-07-02")
-                .build();
-
-        // 2. 최종 결과 바디 응답 조립
-        AppliedBenefitListResponse response = new AppliedBenefitListResponse(
-                Arrays.asList(applied1, applied2)
+        // 1. 샘플 데이터 셋업
+        List<AppliedBenefitInfo> allApplied = Arrays.asList(
+                AppliedBenefitInfo.builder().benefitId(42L).benefitName("아산사회복지재단 성적우수 장학금").appliedDate("2026-07-01").applyStatus("SELECTED").build(),
+                AppliedBenefitInfo.builder().benefitId(105L).benefitName("서울시 청년 대중교통비 지원금").appliedDate("2026-07-02").applyStatus("UNDER_REVIEW").build(),
+                AppliedBenefitInfo.builder().benefitId(106L).benefitName("미래 인재 장학금").appliedDate("2026-07-03").applyStatus("NOT_SELECTED").build()
         );
 
-        return ApiResponse.success(response);
+        // 2. 필터링 로직 (ALL이 아니면 해당 status만 필터링)
+        List<AppliedBenefitInfo> filteredList;
+        if ("ALL".equalsIgnoreCase(applyStatus)) {
+            filteredList = allApplied;
+        } else {
+            filteredList = allApplied.stream()
+                    .filter(b -> b.getApplyStatus().equalsIgnoreCase(applyStatus))
+                    .collect(Collectors.toList());
+        }
+
+        return ApiResponse.success(new AppliedBenefitListResponse(filteredList));
     }
 
     @Getter
@@ -63,6 +60,7 @@ public class Mock8thApiController {
     public static class AppliedBenefitInfo {
         private Long benefitId;
         private String benefitName;
-        private String appliedDate; // yyyy-MM-dd 형식 스트링
+        private String appliedDate;
+        private String applyStatus; // 명세서 요구사항 반영
     }
 }
