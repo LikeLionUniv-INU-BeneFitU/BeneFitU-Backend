@@ -1,11 +1,16 @@
 package com.fitu.benefitu.domain.auth.controller;
 
+import com.fitu.benefitu.domain.auth.service.AuthService;
+import com.fitu.benefitu.domain.users.dto.AuthSignupRequest;
+import com.fitu.benefitu.domain.users.dto.AuthSignupResponse;
 import com.fitu.benefitu.domain.users.entity.Users;
 import com.fitu.benefitu.domain.users.repository.UsersRepository;
+import com.fitu.benefitu.domain.users.service.UsersService;
 import com.fitu.benefitu.global.config.auth.JwtProvider;
 import com.fitu.benefitu.global.response.ApiResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     private final UsersRepository usersRepository;
+    private final AuthService authService;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider; // JWT 토큰 발행용 컴포넌트
 
@@ -37,6 +43,14 @@ public class AuthController {
         String accessToken = jwtProvider.createToken(authentication, 3600L * 24 * 7, user.getId());
 
         return ApiResponse.success(new LoginResponse(accessToken));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<ApiResponse<AuthSignupResponse>> signup(
+            @RequestBody AuthSignupRequest request
+    ) {
+        AuthSignupResponse response = authService.signup(request);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @Getter

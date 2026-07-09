@@ -6,7 +6,6 @@ import com.fitu.benefitu.domain.users.dto.UsersSubmitInfoResponse;
 import com.fitu.benefitu.domain.users.service.UsersService;
 import com.fitu.benefitu.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
