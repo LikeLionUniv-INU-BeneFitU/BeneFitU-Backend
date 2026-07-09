@@ -18,10 +18,10 @@ import java.time.LocalDate;
 public class Users {
 
     //객체생성구현해보기
-    public static Users createUsers(AuthSignupRequest request){
+    public static Users createUsers(String username, String password) {
         Users users = new Users();
-        users.username = request.username();
-        users.password = request.password();
+        users.username = username;
+        users.password = password;
         return users;
     }
 
