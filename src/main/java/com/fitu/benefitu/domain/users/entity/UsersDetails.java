@@ -31,9 +31,12 @@ public class UsersDetails {
         details.gpa = request.detailInfo().gpa().floatValue(); // Double -> Float 변환
         details.incomeBracket = request.detailInfo().incomeBracket();
         details.isBasicLiving = request.detailInfo().isBasicLiving();
-        details.isSecondLowest = request.detailInfo().inSecondLowest();
+        details.isSecondLowest = request.detailInfo().isSecondLowest();
         details.userId = user;
         return details;
 
+    }
+
+    public void updateDetailInfo(Double gpa, Integer integer, Boolean basicLiving, Boolean secondLowest) {
     }
 }

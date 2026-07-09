@@ -38,4 +38,13 @@ public class Users {
     private String residence;
     private LocalDate birthDate;
     private Boolean hasDetails;
+
+    public void updateBaseInfo(String schoolName, String department, Integer grade, String residence, String birthDate) {
+        this.schoolName = schoolName;
+        this.department = department;
+        this.grade = grade;
+        this.residence = residence;
+
+        this.birthDate = java.time.LocalDate.parse(birthDate);
+    }
 }

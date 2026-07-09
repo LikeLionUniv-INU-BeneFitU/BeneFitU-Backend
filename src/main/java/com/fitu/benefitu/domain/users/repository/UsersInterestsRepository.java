@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface UsersInterestsRepository extends JpaRepository<UsersInterests, Long> {
     List<UsersInterests> findAllByUser(Users user);
+
+    void deleteByUser(Users user);
 }

@@ -1,10 +1,13 @@
 package com.fitu.benefitu.domain.users.entity;
 
+import com.fitu.benefitu.domain.users.dto.InterestsDto;
 import com.fitu.benefitu.domain.users.dto.UsersSubmitInfoRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Map;
 
 @Entity
 @Getter
@@ -26,12 +29,11 @@ public class UsersInterests {
         UsersInterests interests = new UsersInterests();
         interests.user = user;
 
-        // 💡 DTO의 InterestsDto 내용을 쉼표 등으로 구분된 하나의 문자열(String)로 변환하여 category에 저장
-        // 예시: "corporate, region, state" 형태로 묶기
-        String categoryString = "Corporate: " + request.detailInfo().Interests().corporate() +
-                ", Region: " + request.detailInfo().Interests().region() +
-                ", Requirements: " + request.detailInfo().Interests().requirements() +
-                ", State: " + request.detailInfo().Interests().state();
+        InterestsDto interestsDto = request.detailInfo().Interests();
+        String categoryString = "Corporate: " + (interestsDto != null ? interestsDto.corporate() : false) +
+                ", Region: " + (interestsDto != null ? interestsDto.region() : false) +
+                ", Requirements: " + (interestsDto != null ? interestsDto.requirements() : false) +
+                ", State: " + (interestsDto != null ? interestsDto.state() : false);
 
         interests.category = categoryString;
 
