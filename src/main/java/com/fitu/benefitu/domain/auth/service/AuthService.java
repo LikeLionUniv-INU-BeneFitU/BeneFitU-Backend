@@ -2,14 +2,18 @@ package com.fitu.benefitu.domain.auth.service;
 
 import com.fitu.benefitu.domain.auth.dto.AuthSignupRequest;
 import com.fitu.benefitu.domain.auth.dto.AuthSignupResponse;
+import com.fitu.benefitu.domain.auth.errors.AuthException;
 import com.fitu.benefitu.domain.users.entity.Users;
 import com.fitu.benefitu.domain.users.errors.UsersException;
 import com.fitu.benefitu.domain.users.repository.UsersRepository;
 import com.fitu.benefitu.global.error.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -17,6 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public Long getUserId() {
+        return (Long) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getDetails();
+    }
 
     public AuthSignupResponse signup(AuthSignupRequest request) {
         //1. 검증
@@ -38,7 +46,7 @@ public class AuthService {
     private void checkUsernameExists(String username) {
         Users user = usersRepository.findByUsername(username);
         if (user != null) { // 유저가 존재하면 중복이므로 에러!
-            throw new GeneralException(UsersException.ALREADY_EXIST_USER_ID_BAD_REQUEST);
+            throw new GeneralException(AuthException.ALREADY_EXIST_USER_ID_BAD_REQUEST);
         }
     }
 
@@ -49,12 +57,12 @@ public class AuthService {
 
         // ID 검증 (빈 문자열 체크)
         if (username == null || username.trim().isEmpty()) {
-            throw new GeneralException(UsersException.WRONG_USER_FORM_BAD_REQUEST);
+            throw new GeneralException(AuthException.WRONG_USER_FORM_BAD_REQUEST);
         }
 
         // PW 검증 (길이 + 정규식 체크)
         if (password == null || !password.matches(passwordPattern)) {
-            throw new GeneralException(UsersException.WRONG_USER_FORM_BAD_REQUEST);
+            throw new GeneralException(AuthException.WRONG_USER_FORM_BAD_REQUEST);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.fitu.benefitu.domain.users.entity;
 
+import com.fitu.benefitu.domain.users.dto.BaseInfoDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,17 +19,18 @@ public class Users {
         Users users = new Users();
         users.username = username;
         users.password = password;
+        users.hasDetails = false;
         return users;
     }
 
-    public void setUserIdANDNameAndPassword(Long id, String username, String password) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-    }
-
-    public void setUsersHasDetails(boolean hasDetails) {
-        this.hasDetails = hasDetails;
+    public void toSubmittedUsers(BaseInfoDto baseInfoDto) {
+        this.name = baseInfoDto.name();
+        this.schoolName= baseInfoDto.schoolName();
+        this.department= baseInfoDto.department();
+        this.grade = baseInfoDto.grade();
+        this.residence = baseInfoDto.residence();
+        this.birthDate = baseInfoDto.birthDate();
+        this.hasDetails = true;
     }
 
     @Id

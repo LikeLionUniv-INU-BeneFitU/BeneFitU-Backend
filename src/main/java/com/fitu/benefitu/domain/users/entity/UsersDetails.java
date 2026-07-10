@@ -1,14 +1,23 @@
 package com.fitu.benefitu.domain.users.entity;
 
+import com.fitu.benefitu.domain.users.dto.DetailInfoRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
 @NoArgsConstructor
 public class UsersDetails {
+    public static UsersDetails createUserDetails(DetailInfoRequest detailInfoRequest, Users users) {
+        UsersDetails usersDetails = new UsersDetails();
+        usersDetails.users = users;
+        usersDetails.gpa = detailInfoRequest.gpa();
+        usersDetails.incomeBracket = detailInfoRequest.incomeBracket();
+        usersDetails.isBasicLiving = detailInfoRequest.isBasicLiving();
+        usersDetails.isSecondLowest = detailInfoRequest.isSecondLowest();
+        return usersDetails;
+    }
 
     public void setOwner(Users user) {
         this.users = user;
