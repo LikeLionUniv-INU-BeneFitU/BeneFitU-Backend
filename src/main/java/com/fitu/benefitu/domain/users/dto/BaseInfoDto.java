@@ -5,6 +5,7 @@ import com.fitu.benefitu.domain.benefits.types.ResidenceType;
 import java.time.LocalDate;
 
 public record BaseInfoDto(
+        String name,
         String schoolName,
         String department,
         Integer grade,
