@@ -6,10 +6,7 @@ import com.fitu.benefitu.domain.users.service.UsersService;
 import com.fitu.benefitu.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -22,5 +19,10 @@ public class UsersController {
             @RequestBody UsersInfoSubmitRequest usersInfoSubmitRequest) {
         UsersInfoSubmitResponse response = usersService.SubmitInfo(usersInfoSubmitRequest);
         return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<ApiResponse<UsersInfoSubmitResponse>> getInfo(){
+        return ResponseEntity.ok(ApiResponse.success(usersService.getInfo()));
     }
 }
