@@ -1,20 +1,15 @@
 package com.fitu.benefitu.domain.auth.service;
 
-import com.fitu.benefitu.domain.users.dto.*;
+import com.fitu.benefitu.domain.auth.dto.AuthSignupRequest;
+import com.fitu.benefitu.domain.auth.dto.AuthSignupResponse;
 import com.fitu.benefitu.domain.users.entity.Users;
-import com.fitu.benefitu.domain.users.entity.UsersDetails;
-import com.fitu.benefitu.domain.users.entity.UsersInterests;
 import com.fitu.benefitu.domain.users.errors.UsersException;
-import com.fitu.benefitu.domain.users.repository.UsersDetailsRepository;
-import com.fitu.benefitu.domain.users.repository.UsersInterestsRepository;
 import com.fitu.benefitu.domain.users.repository.UsersRepository;
 import com.fitu.benefitu.global.error.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional

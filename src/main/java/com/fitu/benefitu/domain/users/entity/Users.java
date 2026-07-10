@@ -1,8 +1,5 @@
 package com.fitu.benefitu.domain.users.entity;
 
-import com.fitu.benefitu.domain.users.dto.AuthSignupRequest;
-import com.fitu.benefitu.domain.users.dto.BaseInfoDto;
-import com.fitu.benefitu.domain.users.dto.UsersSubmitInfoRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,13 +26,13 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
-    private String password;
-    private String name;
-    private String schoolName;
-    private String department;
-    private Integer grade;
-    private String residence;
-    private LocalDate birthDate;
-    private Boolean hasDetails;
+    private String username;    // 로그인 ID
+    private String password;    // 암호화된 비밀번호
+    private String name;        // 사용자 이름
+    private String schoolName;  // 학교 이름
+    private String department;  // 전공 이름
+    private Integer grade;      // 학년
+    private String residence;   // 거주 지역
+    private LocalDate birthDate;// 생년월일
+    private Boolean hasDetails; // 사용자 세부 정보 유무
 }

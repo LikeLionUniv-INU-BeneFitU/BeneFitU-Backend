@@ -1,4 +1,4 @@
-package com.fitu.benefitu.domain.users.dto;
+package com.fitu.benefitu.domain.auth.dto;
 
 public record AuthSignupResponse(
         String matchedUserName

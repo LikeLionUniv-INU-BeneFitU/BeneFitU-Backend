@@ -1,11 +1,10 @@
 package com.fitu.benefitu.domain.auth.controller;
 
 import com.fitu.benefitu.domain.auth.service.AuthService;
-import com.fitu.benefitu.domain.users.dto.AuthSignupRequest;
-import com.fitu.benefitu.domain.users.dto.AuthSignupResponse;
+import com.fitu.benefitu.domain.auth.dto.AuthSignupRequest;
+import com.fitu.benefitu.domain.auth.dto.AuthSignupResponse;
 import com.fitu.benefitu.domain.users.entity.Users;
 import com.fitu.benefitu.domain.users.repository.UsersRepository;
-import com.fitu.benefitu.domain.users.service.UsersService;
 import com.fitu.benefitu.global.config.auth.JwtProvider;
 import com.fitu.benefitu.global.response.ApiResponse;
 import lombok.Getter;
