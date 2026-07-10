@@ -14,12 +14,21 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Users {
 
-    //객체생성구현해보기
     public static Users createUsers(String username, String password) {
         Users users = new Users();
         users.username = username;
         users.password = password;
         return users;
+    }
+
+    public void setUserIdANDNameAndPassword(Long id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+    }
+
+    public void setUsersHasDetails(boolean hasDetails) {
+        this.hasDetails = hasDetails;
     }
 
     @Id

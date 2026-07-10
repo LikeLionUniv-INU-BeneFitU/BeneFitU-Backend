@@ -1,7 +1,7 @@
 package com.fitu.benefitu.domain.users.dto;
 
-public record UsersInfoSubmitRequest(
+public record UsersInfoSubmitResponse(
         BaseInfoDto baseInfo,
-        DetailInfoRequest detailInfo
+        DetailInfoResponse detailInfo
 ) {
 }

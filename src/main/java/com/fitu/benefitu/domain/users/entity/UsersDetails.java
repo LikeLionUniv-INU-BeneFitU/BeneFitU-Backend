@@ -10,6 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UsersDetails {
 
+    public void setOwner(Users user) {
+        this.users = user;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

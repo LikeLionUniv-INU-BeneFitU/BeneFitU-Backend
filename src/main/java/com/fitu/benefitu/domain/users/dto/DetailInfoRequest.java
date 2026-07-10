@@ -3,7 +3,7 @@ package com.fitu.benefitu.domain.users.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-public record DetailInfoDto(
+public record DetailInfoRequest(
         Float gpa,              // 학점
         Integer incomeBracket,  // 소득 분위
         Boolean isBasicLiving,  // 기초생활수급자 여부

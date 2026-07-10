@@ -1,5 +1,8 @@
 package com.fitu.benefitu.domain.benefits.types;
 
+import lombok.Getter;
+
+@Getter
 public enum BenefitCategory {
         NATIONAL("국가장학금"),
         CORPORATE("기업재단장학금"),
