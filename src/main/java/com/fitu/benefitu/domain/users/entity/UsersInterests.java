@@ -1,14 +1,14 @@
 package com.fitu.benefitu.domain.users.entity;
 
-import com.fitu.benefitu.domain.users.dto.UsersSubmitInfoRequest;
+import com.fitu.benefitu.domain.benefits.types.BenefitCategory;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class UsersInterests {
 
@@ -16,26 +16,14 @@ public class UsersInterests {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "USER_ID")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Users user;
+    private Users users;
 
-    private String category;
+    private BenefitCategory category;
 
-    public static UsersInterests createUsersInterests(UsersSubmitInfoRequest request, Users user) {
-        UsersInterests interests = new UsersInterests();
-        interests.user = user;
-
-        // 💡 DTO의 InterestsDto 내용을 쉼표 등으로 구분된 하나의 문자열(String)로 변환하여 category에 저장
-        // 예시: "corporate, region, state" 형태로 묶기
-        String categoryString = "Corporate: " + request.detailInfo().Interests().corporate() +
-                ", Region: " + request.detailInfo().Interests().region() +
-                ", Requirements: " + request.detailInfo().Interests().requirements() +
-                ", State: " + request.detailInfo().Interests().state();
-
-        interests.category = categoryString;
-
-        return interests;
-
+    public UsersInterests(Users user, BenefitCategory benefitCategory) {
+        this.users = user;
+        this.category = benefitCategory;
     }
 }

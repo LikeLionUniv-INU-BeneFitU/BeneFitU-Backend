@@ -1,6 +1,5 @@
 package com.fitu.benefitu.domain.users.entity;
 
-import com.fitu.benefitu.domain.users.dto.UsersSubmitInfoRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,32 +7,23 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
-
 public class UsersDetails {
+
+    public void setOwner(Users user) {
+        this.users = user;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn
+    @JoinColumn(name = "USER_ID")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Users userId;
+    private Users users;            // 사용자 아이디
 
-    private Float gpa;
-    private Integer incomeBracket;
-    private Boolean isBasicLiving;
-    private Boolean isSecondLowest;
-
-    public static UsersDetails createUsersDetails(UsersSubmitInfoRequest request, Users user) {
-        UsersDetails details = new UsersDetails();
-        details.gpa = request.detailInfo().gpa().floatValue(); // Double -> Float 변환
-        details.incomeBracket = request.detailInfo().incomeBracket();
-        details.isBasicLiving = request.detailInfo().isBasicLiving();
-        details.isSecondLowest = request.detailInfo().inSecondLowest();
-        details.userId = user;
-        return details;
-
-    }
+    private Float gpa;              // 학점
+    private Integer incomeBracket;  // 소득 분위
+    private Boolean isBasicLiving;  // 기초 생활 수급자 여부
+    private Boolean isSecondLowest; // 차상위 계층 여부
 }
