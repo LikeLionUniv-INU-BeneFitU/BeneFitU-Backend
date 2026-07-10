@@ -46,42 +46,50 @@ jobs:
             mkdir -p /home/${{ secrets.USERNAME }}/likeLion/BeneFitU-Backend
             cd /home/${{ secrets.USERNAME }}/likeLion/BeneFitU-Backend
             
-            echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" > .env
-            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
-            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
-            echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
-            echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
+            # .env 파일 생성
+            cat << EOF > .env
+            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+            MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+            MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+            SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
+            SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+            EOF
             
-            cat << 'EOF' > docker-compose.yml
+            # docker-compose.yml 파일 생성
+            cat << EOF > docker-compose.yml
             version: '3.8'
             services:
-              backend:
-                image: ${DOCKER_USERNAME}/benefitu-backend:latest
-                container_name: benefitu-backend
-                ports:
-                  - "8080:8080"
-                environment:
-                  - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
-                  - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-                  - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-                depends_on:
-                  - db
               db:
                 image: mysql:8.0
                 container_name: benefitu-db
+                restart: always
                 ports:
-                  - "3306:3306"
+                  - "3307:3306"
                 environment:
-                  - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-                  - MYSQL_DATABASE=${MYSQL_DATABASE}
+                  MYSQL_ROOT_PASSWORD: \${MYSQL_ROOT_PASSWORD}
+                  MYSQL_DATABASE: \${MYSQL_DATABASE}
+                  MYSQL_USER: \${SPRING_DATASOURCE_USERNAME}
+                  MYSQL_PASSWORD: \${SPRING_DATASOURCE_PASSWORD}
                 volumes:
                   - mysql_data:/var/lib/mysql
+              backend:
+                image: ${{ secrets.DOCKER_USERNAME }}/benefitu-backend:latest
+                container_name: benefitu-backend
+                restart: always
+                ports:
+                  - "8080:8080"
+                environment:
+                  SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/\${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+                  SPRING_DATASOURCE_USERNAME: \${SPRING_DATASOURCE_USERNAME}
+                  SPRING_DATASOURCE_PASSWORD: \${SPRING_DATASOURCE_PASSWORD}
+                depends_on:
+                  - db
             volumes:
               mysql_data:
             EOF
             
-            # Docker Compose 실행 시 .env를 명시적으로 참조하도록 설정
-            docker compose --env-file .env down
-            docker compose --env-file .env pull
-            docker compose --env-file .env up -d --force-recreate
+            # 컨테이너 재실행
+            docker compose down
+            docker compose pull
+            docker compose up -d --force-recreate
             docker image prune -f
