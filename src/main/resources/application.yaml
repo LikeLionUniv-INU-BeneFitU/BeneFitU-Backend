@@ -40,4 +40,7 @@ api:
 
 logging:
   level:
-    org.springframework.security: DEBUG
+    root: INFO
+    com.fitu.benefitu: DEBUG  # 본인의 패키지 경로를 DEBUG로 설정
+    org.springframework.web: DEBUG # 웹 요청 상세 로그
+    org.springframework.security: INFO # 시큐리티는 너무 복잡하니 INFO로 낮추기
