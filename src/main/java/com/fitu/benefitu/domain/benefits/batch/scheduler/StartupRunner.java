@@ -26,7 +26,7 @@ public class StartupRunner {
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void onApplicationReady() {
-        // 테스트 목적으로 임시로 잠가둡니다.
+//        // 테스트 목적으로 임시로 잠가둡니다.
 //        // 서버가 완전히 켜진 직후 배치를 실행합니다.
 //        batchService.BatchAll();
 //        System.out.println("[batch] 작업 완료했습니다.");
@@ -35,7 +35,7 @@ public class StartupRunner {
 //        System.out.println("[inner service] 등록된 사용자 : "+users.size());
 //        List<Benefits> benefits = benefitsRepository.findAll();
 //        System.out.println("[inner service] 등록된 혜택 : "+benefits.size());
-//        benefitsInnerService.UpdateAllUsersAppliedBenefits(users, benefits);
+//        benefitsInnerService.updateAllUsersAppliedBenefits(users, benefits);
 //        System.out.println("[inner service] 모든 UsersAppliedBenefits 등록 마쳤습니다.");
     }
 }

@@ -1,10 +1,7 @@
 package com.fitu.benefitu.domain.benefits.service;
 
 import com.fitu.benefitu.domain.auth.service.AuthService;
-import com.fitu.benefitu.domain.benefits.dto.CountByCategoryResponse;
-import com.fitu.benefitu.domain.benefits.dto.GetBenefitListResponse;
-import com.fitu.benefitu.domain.benefits.dto.GetTotalAmountResponse;
-import com.fitu.benefitu.domain.benefits.dto.SetApplyStatusResponse;
+import com.fitu.benefitu.domain.benefits.dto.*;
 import com.fitu.benefitu.domain.benefits.entity.Benefits;
 import com.fitu.benefitu.domain.benefits.repository.BenefitsRepository;
 import com.fitu.benefitu.domain.benefits.types.BenefitCategory;
@@ -137,5 +134,20 @@ public class BenefitsService {
         String formattedAmount = String.format("%,d", totalAmount)+ "원";
 
         return new GetTotalAmountResponse(formattedAmount);
+    }
+
+    public GetAppliedBenefitsResponse getAppliedBenefits() {
+        Users user = usersRepository.findById(authService.getUserId()).orElseThrow();
+        List<UsersAppliedBenefits> appliedBenefits = usersAppliedBenefitsRepository.findByUser(user);
+        List<GetAppliedBenefitsResponse.AppliedBenefits> appliedBenefitsList =
+                appliedBenefits.stream()
+                        .filter(a->!a.getStatus().equals(ApplyStatus.NOT_APPLIED))
+                        .map(a->new GetAppliedBenefitsResponse.AppliedBenefits(
+                                a.getBenefit().getId(),
+                                a.getBenefit().getBenefitName(),
+                                a.getAppliedAt().toString(),
+                                a.getStatus().toString()
+                        )).toList();
+        return new GetAppliedBenefitsResponse(appliedBenefitsList);
     }
 }

@@ -13,7 +13,7 @@ public record GetAppliedBenefitsResponse(
     public static class AppliedBenefits {
         private final Long benefitId;
         private final String benefitName;
-        private final String LocalDate;
+        private final String appliedDate;
         private final String applyStatus;
     }
 }

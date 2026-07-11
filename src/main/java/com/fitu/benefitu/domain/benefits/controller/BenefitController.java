@@ -19,7 +19,7 @@ public class BenefitController {
             @RequestParam(value = "category", defaultValue = "ALL") String category,
             @RequestParam(value = "sort", defaultValue = "DEFAULT") String sort,
             // 0 부터 시작
-            @RequestParam(value = "page", defaultValue = "10") Integer page
+            @RequestParam(value = "page", defaultValue = "0") Integer page
     ) {
         GetBenefitListResponse response = benefitsService.getBenefitList(category, sort, page);
         return ResponseEntity.ok(ApiResponse.success(response));
@@ -33,6 +33,11 @@ public class BenefitController {
     @GetMapping("/total-amount")
     public ResponseEntity<ApiResponse<GetTotalAmountResponse>> getBenefitsTotalAmount(){
         return ResponseEntity.ok(ApiResponse.success(benefitsService.getTotalAmount()));
+    }
+
+    @GetMapping("/applied")
+    public ResponseEntity<ApiResponse<GetAppliedBenefitsResponse>> getAppliedBenefits(){
+        return ResponseEntity.ok(ApiResponse.success(benefitsService.getAppliedBenefits()));
     }
 
     @PostMapping("/{benefitId}/apply")
