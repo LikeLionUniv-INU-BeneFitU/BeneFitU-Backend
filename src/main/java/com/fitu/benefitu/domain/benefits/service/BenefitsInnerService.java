@@ -30,6 +30,13 @@ public class BenefitsInnerService {
     private final BenefitTargetConditionsRepository benefitTargetConditionsRepository;
 
     /**
+     * UsersAppliedBenefits -> Benefits
+     */
+    public List<Benefits> getBenefitsByUsersAppliedBenefits(List<UsersAppliedBenefits> usersAppliedBenefits, ApplyStatus applyStatus) {
+        return usersAppliedBenefits.stream().filter(a -> a.getStatus().equals(applyStatus)).map(UsersAppliedBenefits::getBenefit).toList();
+    }
+
+    /**
      * 배치 혹은 전체 업데이트 시 사용 (N+1 쿼리 최적화 버전)
      **/
     public void UpdateAllUsersAppliedBenefits(List<Users> allUsers, List<Benefits> allBenefits) {

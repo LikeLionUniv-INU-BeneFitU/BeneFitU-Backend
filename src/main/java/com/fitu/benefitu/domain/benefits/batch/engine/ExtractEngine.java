@@ -87,13 +87,13 @@ public class ExtractEngine {
         if (Boolean.TRUE.equals(youthCenterBenefitsCategoryExtractor.isNational(raw))) {
             categories.add(BenefitCategory.NATIONAL);
         }
-        if (Boolean.TRUE.equals(youthCenterBenefitsCategoryExtractor.isRegional(raw))) {
+        else if (Boolean.TRUE.equals(youthCenterBenefitsCategoryExtractor.isRegional(raw))) {
             categories.add(BenefitCategory.REGIONAL);
         }
-        if(Boolean.TRUE.equals(youthCenterBenefitsCategoryExtractor.isCorporate(raw))) {
+        else if(Boolean.TRUE.equals(youthCenterBenefitsCategoryExtractor.isCorporate(raw))) {
             categories.add(BenefitCategory.CORPORATE);
         }
-        if(Boolean.TRUE.equals(youthCenterBenefitsCategoryExtractor.isConditional(raw))) {
+        else {
             categories.add(BenefitCategory.CONDITIONAL);
         }
 
