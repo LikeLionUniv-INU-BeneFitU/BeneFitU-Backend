@@ -59,11 +59,12 @@ public class BenefitsInnerService {
                     continue;
                 }
 
+                //TODO : 초기 상태 미신청 상태 하나 띄워놓기
                 UsersAppliedBenefits appliedBenefit = new UsersAppliedBenefits(
                         users,
                         benefit,
                         LocalDate.now(),
-                        ApplyStatus.NOT_SELECTED
+                        ApplyStatus.NOT_APPLIED
                 );
                 usersAppliedBenefitsList.add(appliedBenefit);
 
@@ -106,7 +107,7 @@ public class BenefitsInnerService {
                         user,
                         benefit,
                         LocalDate.now(),
-                        ApplyStatus.NOT_SELECTED
+                        ApplyStatus.NOT_APPLIED
                 );
                 usersAppliedBenefitsList.add(appliedBenefit);
             }
@@ -135,7 +136,7 @@ public class BenefitsInnerService {
                 users,
                 benefits,
                 LocalDate.now(),
-                ApplyStatus.NOT_SELECTED
+                ApplyStatus.NOT_APPLIED
         );
 
         return usersAppliedBenefitsRepository.save(usersAppliedBenefits);

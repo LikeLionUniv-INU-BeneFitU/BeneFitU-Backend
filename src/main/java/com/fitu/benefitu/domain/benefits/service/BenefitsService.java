@@ -41,7 +41,7 @@ public class BenefitsService {
         SortType sortType = SortType.valueOf(sort);
 
         Users user = usersRepository.findById(authService.getUserId()).orElseThrow();
-        List<Benefits> usersAppliedBenefitsList = new ArrayList<>(usersAppliedBenefitsRepository.findByUser(user).stream().map(UsersAppliedBenefits::getBenefit).toList());
+        List<Benefits> usersAppliedBenefitsList = new ArrayList<>(usersAppliedBenefitsRepository.findByUserAndStatus(user, ApplyStatus.NOT_APPLIED).stream().map(UsersAppliedBenefits::getBenefit).toList());
 
         if (sortType.equals(SortType.AMOUNT_HIGH)) {
             usersAppliedBenefitsList.sort(Comparator.comparingLong(Benefits::getAmount).reversed());
