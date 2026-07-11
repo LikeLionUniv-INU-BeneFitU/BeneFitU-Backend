@@ -3,10 +3,7 @@ package com.fitu.benefitu.domain.users.service;
 import com.fitu.benefitu.domain.auth.SecurityUtil;
 import com.fitu.benefitu.domain.benefits.types.ResidenceType;
 import com.fitu.benefitu.domain.benefits.types.SchoolType;
-import com.fitu.benefitu.domain.users.dto.BaseInfoDto;
-import com.fitu.benefitu.domain.users.dto.DetailInfoResponse;
-import com.fitu.benefitu.domain.users.dto.UsersInfoSubmitRequest;
-import com.fitu.benefitu.domain.users.dto.UsersInfoSubmitResponse;
+import com.fitu.benefitu.domain.users.dto.*;
 import com.fitu.benefitu.domain.users.entity.Users;
 import com.fitu.benefitu.domain.users.entity.UsersDetails;
 import com.fitu.benefitu.domain.users.entity.UsersInterests;
@@ -22,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -205,6 +204,25 @@ public class UsersService {
                         usersDetails.getIsSecondLowest(),
                         interestsResponses
                 )
+        );
+    }
+
+    public UsersMetadataResponse getMetadata() {
+        List<UsersSchoolDto> schoolResponse = new ArrayList<>();
+        SchoolType school = SchoolType.INCHEON;
+        schoolResponse.add(new UsersSchoolDto(
+                school.getSchoolId(),
+                school.getSchoolName(),
+                school.getDepartments().stream().map(
+                        a -> new UsersSchoolDto.Department(
+                                a.getDepartmentCode(),
+                                a.getDepartmentName()
+                        )
+                ).toList()
+        ));
+        return new UsersMetadataResponse(
+                schoolResponse,
+                Arrays.stream(ResidenceType.values()).toList()
         );
     }
 }
