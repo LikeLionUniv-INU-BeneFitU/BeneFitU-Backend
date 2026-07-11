@@ -1,6 +1,7 @@
 package com.fitu.benefitu.domain.users.service;
 
 import com.fitu.benefitu.domain.auth.SecurityUtil;
+import com.fitu.benefitu.domain.benefits.service.BenefitsInnerService;
 import com.fitu.benefitu.domain.benefits.types.ResidenceType;
 import com.fitu.benefitu.domain.benefits.types.SchoolType;
 import com.fitu.benefitu.domain.users.dto.*;
@@ -30,6 +31,7 @@ public class UsersService {
     private final UsersRepository usersRepository;
     private final UsersDetailsRepository usersDetailsRepository;
     private final UsersInterestsRepository usersInterestsRepository;
+    private final BenefitsInnerService benefitsInnerService;
 
     public UsersInfoSubmitResponse SubmitInfo(UsersInfoSubmitRequest usersInfoSubmitRequest) {
         Long userId = SecurityUtil.getCurrentUserId();
@@ -49,6 +51,12 @@ public class UsersService {
 
         usersDetailsRepository.save(usersDetails);
         usersInterestsRepository.saveAll(usersInterests);
+
+        // 사용자와 혜택 매핑
+        usersRepository.flush();
+        usersDetailsRepository.flush();
+        usersInterestsRepository.flush();
+        benefitsInnerService.updateUsersAppliedBenefitsForUser(user);
 
         List<String> interestsResponses = usersInterests.stream().map(a -> a.getCategory().getDescription()).toList();
         return new UsersInfoSubmitResponse(
@@ -194,6 +202,13 @@ public class UsersService {
         List<UsersInterests> newUsersInterests = UsersInterests.toInterests(usersInfoSubmitRequest.detailInfo().interests(), user);
         usersInterests.addAll(newUsersInterests);
 
+        // 사용자 혜택 매핑
+        usersRepository.flush();
+        usersDetailsRepository.flush();
+        usersInterestsRepository.flush();
+        benefitsInnerService.deleteAllUsersAppliedBenefitsByUsers(user);
+        benefitsInnerService.updateUsersAppliedBenefitsForUser(user);
+
         List<String> interestsResponses = newUsersInterests.stream().map(a -> a.getCategory().getDescription()).toList();
         return new UsersInfoSubmitResponse(
                 usersInfoSubmitRequest.baseInfo(),
@@ -222,7 +237,7 @@ public class UsersService {
         ));
         return new UsersMetadataResponse(
                 schoolResponse,
-                Arrays.stream(ResidenceType.values()).toList()
+                Arrays.stream(ResidenceType.values()).map(ResidenceType::getResidenceName).toList()
         );
     }
 }

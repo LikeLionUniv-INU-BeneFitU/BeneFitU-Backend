@@ -29,6 +29,16 @@ public enum ResidenceType {
         this.residenceCode = residenceCode;
     }
 
+    public static ResidenceType getResidenceTypeByResidenceName(String residenceName) {
+        if (residenceName == null) {return null;}
+        for (ResidenceType residenceType : ResidenceType.values()) {
+            if (residenceType.getResidenceName().equals(residenceName)) {
+                return residenceType;
+            }
+        }
+        return null;
+    }
+
     public static boolean checkResidenceName(String residenceName){
         for(ResidenceType type : values()){
             if(type.getResidenceName().equals(residenceName)){

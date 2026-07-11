@@ -111,6 +111,28 @@ public enum SchoolType {
         private final String departmentName;
     }
 
+    public static SchoolType getSchoolTypeBySchoolName(String schoolName) {
+        if (schoolName == null) return null; // 방어 코드 추가
+
+        for (SchoolType schoolType : SchoolType.values()) {
+            if (schoolType.getSchoolName().equals(schoolName)) {
+                return schoolType;
+            }
+        }
+        return null;
+    }
+
+    public static Department getDepartmentByDepartmentName(String departmentName) {
+        if (departmentName == null) return null; // 방어 코드 추가
+
+        for(Department department : SchoolType.INCHEON.getDepartments()) {
+            if(department.getDepartmentName().equals(departmentName)) {
+                return department;
+            }
+        }
+        return null;
+    }
+
     public Department getDepartmentByCode(String code) {
         if (code == null || code.isEmpty()) return null;
         return this.getDepartments().stream()
