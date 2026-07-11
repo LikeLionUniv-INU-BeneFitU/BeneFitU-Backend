@@ -41,7 +41,7 @@ public class AuthController {
         // 3. 토큰 발행
         String accessToken = jwtProvider.createToken(authentication, 3600L * 24 * 7, user.getId());
 
-        return ApiResponse.success(new LoginResponse(accessToken));
+        return ApiResponse.success(new LoginResponse(user.getHasDetails(), accessToken));
     }
 
     @PostMapping("/signup")
@@ -61,6 +61,7 @@ public class AuthController {
     @Getter
     @RequiredArgsConstructor
     public static class LoginResponse {
+        private final boolean hasDetails;
         private final String accessToken;
     }
 }

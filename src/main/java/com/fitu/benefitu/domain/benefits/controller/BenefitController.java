@@ -40,6 +40,12 @@ public class BenefitController {
         return ResponseEntity.ok(ApiResponse.success(benefitsService.getAppliedBenefits()));
     }
 
+    @GetMapping("/{benefitId}")
+    public ResponseEntity<ApiResponse<GetBenefitsDetailsResponse>> getBenefitDetils(
+            @PathVariable("benefitId") Long benefitId){
+        return ResponseEntity.ok(ApiResponse.success(benefitsService.getBenefitsDetails(benefitId)));
+    }
+
     @PostMapping("/{benefitId}/apply")
     public ResponseEntity<ApiResponse<SetApplyStatusResponse>> applyBenefit(
             @PathVariable String benefitId,
