@@ -28,4 +28,11 @@ public class UsersAppliedBenefits {
 
     @Enumerated(EnumType.STRING)
     private ApplyStatus status;
+
+    public UsersAppliedBenefits(Users users, Benefits benefits, LocalDate now, ApplyStatus applyStatus) {
+        this.user = users;
+        this.benefit = benefits;
+        this.appliedAt = now;
+        this.status = applyStatus;
+    }
 }
