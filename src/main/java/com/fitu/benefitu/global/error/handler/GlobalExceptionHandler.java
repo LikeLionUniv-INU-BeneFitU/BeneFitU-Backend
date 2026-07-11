@@ -20,12 +20,14 @@ public class GlobalExceptionHandler {
      * 비즈니스 로직에서 의도적으로 발생시킨 커스텀 예외를 처리한다.
      */
     @ExceptionHandler(GeneralException.class)
-    public ResponseEntity<ApiResponse<Void>> handleBaseException(GeneralException exception) {
-        return ResponseEntity
-                .status(exception.getErrorCode().getStatus())
-                .body(ApiResponse.fail(exception.getErrorCode()));
-    }
+    public ResponseEntity<ApiResponse<Object>> handleGeneralException(GeneralException e) {
+        // result가 있으면 데이터 포함, 없으면 null(ApiResponse에서 NON_NULL 옵션으로 자동 제거됨)
+        ApiResponse<Object> response = ApiResponse.fail(e.getErrorCode(), e.getResult());
 
+        return ResponseEntity
+                .status(e.getErrorCode().getStatus())
+                .body(response);
+    }
 
     /**
      * @Valid 검증 실패 시 첫 번째 필드 오류 메시지를 내려준다.
