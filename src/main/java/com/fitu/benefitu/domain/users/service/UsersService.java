@@ -222,7 +222,7 @@ public class UsersService {
         ));
         return new UsersMetadataResponse(
                 schoolResponse,
-                Arrays.stream(ResidenceType.values()).toList()
+                Arrays.stream(ResidenceType.values()).map(ResidenceType::getResidenceName).toList()
         );
     }
 }

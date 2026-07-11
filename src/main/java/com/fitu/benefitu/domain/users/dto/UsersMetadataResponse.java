@@ -6,6 +6,6 @@ import java.util.List;
 
 public record UsersMetadataResponse(
         List<UsersSchoolDto> schools,
-        List<ResidenceType> residences
+        List<String> residences
 ) {
 }
