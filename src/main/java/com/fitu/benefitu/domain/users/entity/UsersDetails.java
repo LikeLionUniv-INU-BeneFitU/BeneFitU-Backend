@@ -19,6 +19,21 @@ public class UsersDetails {
         return usersDetails;
     }
 
+    public void updateUserDetails(DetailInfoRequest detailInfoRequest) {
+        if (detailInfoRequest.gpa() != null) {
+            this.gpa = detailInfoRequest.gpa();
+        }
+        if (detailInfoRequest.incomeBracket() != null) {
+            this.incomeBracket = detailInfoRequest.incomeBracket();
+        }
+        if (detailInfoRequest.isBasicLiving() != null) {
+            this.isBasicLiving = detailInfoRequest.isBasicLiving();
+        }
+        if (detailInfoRequest.isSecondLowest() != null) {
+            this.isSecondLowest = detailInfoRequest.isSecondLowest();
+        }
+    }
+
     public void setOwner(Users user) {
         this.users = user;
     }

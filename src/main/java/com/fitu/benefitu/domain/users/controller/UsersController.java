@@ -25,4 +25,11 @@ public class UsersController {
     public ResponseEntity<ApiResponse<UsersInfoSubmitResponse>> getInfo(){
         return ResponseEntity.ok(ApiResponse.success(usersService.getInfo()));
     }
+
+    @PatchMapping("/info")
+    public ResponseEntity<ApiResponse<UsersInfoSubmitResponse>> updateInfo(
+            @RequestBody UsersInfoSubmitRequest usersInfoSubmitRequest
+    ){
+        return ResponseEntity.ok(ApiResponse.success(usersService.updateInfo(usersInfoSubmitRequest)));
+    }
 }

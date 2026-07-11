@@ -25,6 +25,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return; // 아래 토큰 검증 로직을 타지 않고 메서드 종료
+        }
         String authHeader = request.getHeader("Authorization");
 
         // 헤더에 Bearer 토큰 존재하는지 확인
