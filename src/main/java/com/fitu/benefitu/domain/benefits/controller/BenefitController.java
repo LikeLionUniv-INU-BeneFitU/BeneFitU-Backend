@@ -1,9 +1,6 @@
 package com.fitu.benefitu.domain.benefits.controller;
 
-import com.fitu.benefitu.domain.benefits.dto.CountByCategoryResponse;
-import com.fitu.benefitu.domain.benefits.dto.GetBenefitListResponse;
-import com.fitu.benefitu.domain.benefits.dto.SetApplyStatusRequest;
-import com.fitu.benefitu.domain.benefits.dto.SetApplyStatusResponse;
+import com.fitu.benefitu.domain.benefits.dto.*;
 import com.fitu.benefitu.domain.benefits.service.BenefitsService;
 import com.fitu.benefitu.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +28,11 @@ public class BenefitController {
     @GetMapping("/count-by-category")
     public ResponseEntity<ApiResponse<CountByCategoryResponse>> getBenefitsCountByCategory(){
         return ResponseEntity.ok(ApiResponse.success(benefitsService.getCountByCategory()));
+    }
+
+    @GetMapping("/total-amount")
+    public ResponseEntity<ApiResponse<GetTotalAmountResponse>> getBenefitsTotalAmount(){
+        return ResponseEntity.ok(ApiResponse.success(benefitsService.getTotalAmount()));
     }
 
     @PostMapping("/{benefitId}/apply")

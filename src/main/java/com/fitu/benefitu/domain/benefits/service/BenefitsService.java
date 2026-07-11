@@ -3,6 +3,7 @@ package com.fitu.benefitu.domain.benefits.service;
 import com.fitu.benefitu.domain.auth.service.AuthService;
 import com.fitu.benefitu.domain.benefits.dto.CountByCategoryResponse;
 import com.fitu.benefitu.domain.benefits.dto.GetBenefitListResponse;
+import com.fitu.benefitu.domain.benefits.dto.GetTotalAmountResponse;
 import com.fitu.benefitu.domain.benefits.dto.SetApplyStatusResponse;
 import com.fitu.benefitu.domain.benefits.entity.Benefits;
 import com.fitu.benefitu.domain.benefits.repository.BenefitsRepository;
@@ -18,6 +19,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -122,5 +124,18 @@ public class BenefitsService {
                 requirementsCount,
                 stateCount
         );
+    }
+
+    public GetTotalAmountResponse getTotalAmount() {
+        Users user = usersRepository.findById(authService.getUserId()).orElseThrow();
+
+        List<UsersAppliedBenefits> appliedBenefits = usersAppliedBenefitsRepository.findByUser(user);
+        Long totalAmount = appliedBenefits.stream().mapToLong(
+                benefits -> benefits.getBenefit().getAmount()
+        ).sum();
+
+        String formattedAmount = String.format("%,d", totalAmount)+ "원";
+
+        return new GetTotalAmountResponse(formattedAmount);
     }
 }
