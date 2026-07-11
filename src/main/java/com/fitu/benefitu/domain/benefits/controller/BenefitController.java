@@ -1,5 +1,6 @@
 package com.fitu.benefitu.domain.benefits.controller;
 
+import com.fitu.benefitu.domain.benefits.dto.CountByCategoryResponse;
 import com.fitu.benefitu.domain.benefits.dto.GetBenefitListResponse;
 import com.fitu.benefitu.domain.benefits.dto.SetApplyStatusRequest;
 import com.fitu.benefitu.domain.benefits.dto.SetApplyStatusResponse;
@@ -25,6 +26,11 @@ public class BenefitController {
     ) {
         GetBenefitListResponse response = benefitsService.getBenefitList(category, sort, page);
         return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @GetMapping("/count-by-category")
+    public ResponseEntity<ApiResponse<CountByCategoryResponse>> getBenefitsCountByCategory(){
+        return ResponseEntity.ok(ApiResponse.success(benefitsService.getCountByCategory()));
     }
 
     @PostMapping("/{benefitId}/apply")

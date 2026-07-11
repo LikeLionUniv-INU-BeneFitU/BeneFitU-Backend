@@ -3,6 +3,7 @@ package com.fitu.benefitu.domain.users.repository;
 import com.fitu.benefitu.domain.benefits.entity.Benefits;
 import com.fitu.benefitu.domain.users.entity.Users;
 import com.fitu.benefitu.domain.users.entity.UsersAppliedBenefits;
+import com.fitu.benefitu.domain.users.type.ApplyStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +14,6 @@ public interface UsersAppliedBenefitsRepository extends JpaRepository<UsersAppli
     boolean existsByUserAndBenefit(Users user, Benefits benefit);
     UsersAppliedBenefits findByUserAndBenefit(Users user, Benefits benefit);
     List<UsersAppliedBenefits> findByUser(Users user);
+    List<UsersAppliedBenefits> findByUserAndStatus(Users user, ApplyStatus status);
     List<UsersAppliedBenefits> findByBenefit(Benefits benefit);
 }
