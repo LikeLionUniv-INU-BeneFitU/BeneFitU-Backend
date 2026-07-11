@@ -83,8 +83,6 @@ jobs:
                 environment:
                   MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
                   MYSQL_DATABASE: ${MYSQL_DATABASE}
-                  MYSQL_USER: ${SPRING_DATASOURCE_USERNAME}
-                  MYSQL_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
                   TZ: Asia/Seoul
             
               app:
