@@ -101,7 +101,7 @@ public class BenefitsService {
 
     public CountByCategoryResponse getCountByCategory() {
         Users user = usersRepository.findById(authService.getUserId()).orElseThrow();
-        List<UsersAppliedBenefits> appliedBenefits = usersAppliedBenefitsRepository.findByUserAndStatus(user, ApplyStatus.NOT_SELECTED);
+        List<UsersAppliedBenefits> appliedBenefits = usersAppliedBenefitsRepository.findByUserAndStatus(user, ApplyStatus.NOT_APPLIED);
         int corporateCount = 0;
         int regionCount = 0;
         int requirementsCount = 0;
