@@ -3,6 +3,7 @@ package com.fitu.benefitu.domain.benefits.service;
 import com.fitu.benefitu.domain.benefits.entity.BenefitTargetConditions;
 import com.fitu.benefitu.domain.benefits.entity.Benefits;
 import com.fitu.benefitu.domain.benefits.repository.BenefitTargetConditionsRepository;
+import com.fitu.benefitu.domain.benefits.repository.BenefitsRepository;
 import com.fitu.benefitu.domain.benefits.types.ResidenceType;
 import com.fitu.benefitu.domain.benefits.types.SchoolType;
 import com.fitu.benefitu.domain.users.entity.Users;
@@ -25,21 +26,58 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class BenefitsInnerService {
-
+    private final BenefitsRepository benefitRepository;
     private final UsersAppliedBenefitsRepository usersAppliedBenefitsRepository;
     private final BenefitTargetConditionsRepository benefitTargetConditionsRepository;
 
     /**
-     * UsersAppliedBenefits -> Benefits
+     * 한 사용자에 대한 업데이트
      */
-    public List<Benefits> getBenefitsByUsersAppliedBenefits(List<UsersAppliedBenefits> usersAppliedBenefits, ApplyStatus applyStatus) {
-        return usersAppliedBenefits.stream().filter(a -> a.getStatus().equals(applyStatus)).map(UsersAppliedBenefits::getBenefit).toList();
+    public void updateUsersAppliedBenefitsForUser(Users users) {
+        List<Benefits> allBenefits = benefitRepository.findAll();
+        List<UsersAppliedBenefits> usersAppliedBenefitsList = new ArrayList<>();
+
+        // 1. 루프 밖에서 전체 TargetConditions를 한 번에 조회하여 Map으로 캐싱 (N+1 방지)
+        List<BenefitTargetConditions> allTargets = benefitTargetConditionsRepository.findAll();
+        System.out.println("[DEBUG] 전체 타겟 조건 개수: " + allTargets.size());
+        Map<Benefits, BenefitTargetConditions> targetMap = allTargets.stream()
+                .collect(Collectors.toMap(BenefitTargetConditions::getBenefit, target -> target, (a, b) -> a));
+
+
+            for (Benefits benefit : allBenefits) {
+                // DB 조회 대신 미리 준비한 Map 메모리에서 쏙 꺼내오기
+                BenefitTargetConditions target = targetMap.get(benefit);
+
+                if (target == null || !canApplyBenefits(users, target)) {
+                    continue;
+                }
+
+                // ⚠️ 주의: 데이터 정합성상 중복 체크가 필요하지만, 이 역시 N+1 여지가 있으므로
+                // 전체 신청 목록을 상단에서 캐싱해서 비교하거나, DB 제약조건(Unique Key)에 의존하고
+                // 루프 내 쿼리를 최소화하는 방향을 추천합니다. 일단 정석 체크 유지:
+                if (usersAppliedBenefitsRepository.existsByUserAndBenefit(users, benefit)) {
+                    continue;
+                }
+
+                UsersAppliedBenefits appliedBenefit = new UsersAppliedBenefits(
+                        users,
+                        benefit,
+                        LocalDate.now(),
+                        ApplyStatus.NOT_SELECTED
+                );
+                usersAppliedBenefitsList.add(appliedBenefit);
+
+        }
+        System.out.println("[DEBUG] 최종 저장될 UsersAppliedBenefits 개수: " + usersAppliedBenefitsList.size());
+        usersAppliedBenefitsRepository.saveAll(usersAppliedBenefitsList);
+
+        usersAppliedBenefitsRepository.flush();
     }
 
     /**
      * 배치 혹은 전체 업데이트 시 사용 (N+1 쿼리 최적화 버전)
      **/
-    public void UpdateAllUsersAppliedBenefits(List<Users> allUsers, List<Benefits> allBenefits) {
+    public void updateAllUsersAppliedBenefits(List<Users> allUsers, List<Benefits> allBenefits) {
         List<UsersAppliedBenefits> usersAppliedBenefitsList = new ArrayList<>();
 
         // 1. 루프 밖에서 전체 TargetConditions를 한 번에 조회하여 Map으로 캐싱 (N+1 방지)
@@ -104,12 +142,12 @@ public class BenefitsInnerService {
     }
 
     // 💡 단건 루프 딜리트 대신 deleteAllInBatch를 사용하여 단 한 번의 쿼리로 삭제 성능 업그레이드
-    public void DeleteAllUsersAppliedBenefitsByUsers(Users users) {
+    public void deleteAllUsersAppliedBenefitsByUsers(Users users) {
         List<UsersAppliedBenefits> usersAppliedBenefits = usersAppliedBenefitsRepository.findByUser(users);
         usersAppliedBenefitsRepository.deleteAllInBatch(usersAppliedBenefits);
     }
 
-    public void DeleteAllUsersAppliedBenefitsByBenefits(Benefits benefits) {
+    public void deleteAllUsersAppliedBenefitsByBenefits(Benefits benefits) {
         List<UsersAppliedBenefits> usersAppliedBenefits = usersAppliedBenefitsRepository.findByBenefit(benefits);
         usersAppliedBenefitsRepository.deleteAllInBatch(usersAppliedBenefits);
     }
