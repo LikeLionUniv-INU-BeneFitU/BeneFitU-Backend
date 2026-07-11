@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface UsersAppliedBenefitsRepository extends JpaRepository<UsersAppliedBenefits, Long> {
     boolean existsByUserAndBenefit(Users user, Benefits benefit);
+    UsersAppliedBenefits findByUserAndBenefit(Users user, Benefits benefit);
     List<UsersAppliedBenefits> findByUser(Users user);
     List<UsersAppliedBenefits> findByBenefit(Benefits benefit);
 }

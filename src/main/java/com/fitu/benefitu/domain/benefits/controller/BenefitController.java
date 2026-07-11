@@ -1,16 +1,13 @@
 package com.fitu.benefitu.domain.benefits.controller;
 
 import com.fitu.benefitu.domain.benefits.dto.GetBenefitListResponse;
+import com.fitu.benefitu.domain.benefits.dto.SetApplyStatusRequest;
+import com.fitu.benefitu.domain.benefits.dto.SetApplyStatusResponse;
 import com.fitu.benefitu.domain.benefits.service.BenefitsService;
 import com.fitu.benefitu.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,8 +22,16 @@ public class BenefitController {
             @RequestParam(value = "sort", defaultValue = "DEFAULT") String sort,
             // 0 부터 시작
             @RequestParam(value = "page", defaultValue = "10") Integer page
-    ){
+    ) {
         GetBenefitListResponse response = benefitsService.getBenefitList(category, sort, page);
         return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PostMapping("/{benefitId}/apply")
+    public ResponseEntity<ApiResponse<SetApplyStatusResponse>> applyBenefit(
+            @PathVariable String benefitId,
+            @RequestBody SetApplyStatusRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(benefitsService.getApplyStatus(benefitId, request.applyStatus())));
     }
 }

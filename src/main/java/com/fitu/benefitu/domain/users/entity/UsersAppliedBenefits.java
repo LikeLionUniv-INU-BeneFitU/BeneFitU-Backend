@@ -35,4 +35,8 @@ public class UsersAppliedBenefits {
         this.appliedAt = now;
         this.status = applyStatus;
     }
+
+    public void updateApplyStatus(ApplyStatus status){
+        this.status =status;
+    }
 }
