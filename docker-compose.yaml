@@ -19,6 +19,7 @@ services:
       MYSQL_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       TZ: Asia/Seoul
 
+
   # 2. 스프링 부트 백엔드 애플리케이션 서비스
   app:
     build:
@@ -36,6 +37,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      # 공공 API
+      YOUTH_CENTER_API_KEY: ${YOUTH_CENTER_API_KEY}
+      TOKEN_PUBLIC_KEY: ${TOKEN_PUBLIC_KEY}
+      TOKEN_PRIVATE_KEY: ${TOKEN_PRIVATE_KEY}
 
 volumes:
   mysql-data:

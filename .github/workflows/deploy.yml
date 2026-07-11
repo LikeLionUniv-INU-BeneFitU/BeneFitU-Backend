@@ -1,0 +1,117 @@
+name: BeneFitU Prod Deploy CI/CD
+
+on:
+  push:
+    branches:
+      - main  # 테스트 시 deploy/prod-setup 이나 dev로 잠시 바꿔서 검증 가능합니다.
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 소스 코드 체크아웃
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # 2. Java 21 및 빌드 환경 세팅
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      # 3. 권한 부여 및 빌드
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew bootJar -x test
+
+      # 4. Docker Hub 로그인
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 5. 운영용 Docker 이미지 빌드 및 푸시
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/benefitu-backend:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/benefitu-backend:latest
+
+      # 6. EC2 운영 서버 SSH 접속 및 배포 진행
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            # 배포 타겟 디렉토리 생성 및 이동
+            mkdir -p /home/${{ secrets.USERNAME }}/likeLion/BeneFitU-Backend
+            cd /home/${{ secrets.USERNAME }}/likeLion/BeneFitU-Backend
+            
+            # .env 파일 생성 (새로운 운영 Secrets 전원 반영)
+            cat << EOF > .env
+            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+            MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+            MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+            SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
+            SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            YOUTH_CENTER_API_KEY=${{ secrets.YOUTH_CENTER_API_KEY }}
+            TOKEN_PUBLIC_KEY=${{ secrets.TOKEN_PUBLIC_KEY }}
+            TOKEN_PRIVATE_KEY=${{ secrets.TOKEN_PRIVATE_KEY }}
+            EOF
+            
+            # docker-compose.yml 파일 생성 (프로젝트에 맞는 구조 반영)
+            cat << 'EOF' > docker-compose.yml
+            version: '3.8'
+            
+            services:
+              mysql:
+                image: mysql:8.0
+                container_name: benefitu-db
+                restart: always
+                ports:
+                  - "3307:3306"
+                volumes:
+                  - mysql-data:/var/lib/mysql
+                environment:
+                  MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+                  MYSQL_DATABASE: ${MYSQL_DATABASE}
+                  MYSQL_USER: ${SPRING_DATASOURCE_USERNAME}
+                  MYSQL_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+                  TZ: Asia/Seoul
+            
+              app:
+                image: ${DOCKER_USERNAME}/benefitu-backend:latest
+                container_name: benefitu-app
+                restart: always
+                ports:
+                  - "8080:8080"
+                depends_on:
+                  - mysql
+                environment:
+                  JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+                  SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+                  SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+                  SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+                  YOUTH_CENTER_API_KEY: ${YOUTH_CENTER_API_KEY}
+                  TOKEN_PUBLIC_KEY: ${TOKEN_PUBLIC_KEY}
+                  TOKEN_PRIVATE_KEY: ${TOKEN_PRIVATE_KEY}
+            
+            volumes:
+              mysql-data:
+            EOF
+            
+            # 컨테이너 갱신 및 실행
+            docker compose down
+            docker compose pull
+            docker compose up -d --force-recreate
+            
+            # 용량 관리용 미사용 이미지 정리
+            docker image prune -f

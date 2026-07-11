@@ -1,4 +1,4 @@
-package com.fitu.benefitu.global.config.jwt;
+package com.fitu.benefitu.global.config.auth;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,6 +25,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return; // 아래 토큰 검증 로직을 타지 않고 메서드 종료
+        }
         String authHeader = request.getHeader("Authorization");
 
         // 헤더에 Bearer 토큰 존재하는지 확인
@@ -33,9 +37,12 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 Jwt jwt = jwtDecoder.decode(token);
                 String username = jwt.getSubject();
+                Long userId = jwt.getClaim("userId");
 
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+                    UsernamePasswordAuthenticationToken authentication
+                            = new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+                    authentication.setDetails(userId);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (Exception e) {
