@@ -202,6 +202,8 @@ public class UsersService {
         List<UsersInterests> newUsersInterests = UsersInterests.toInterests(usersInfoSubmitRequest.detailInfo().interests(), user);
         usersInterests.addAll(newUsersInterests);
 
+        usersInterestsRepository.saveAll(newUsersInterests);
+
         // 사용자 혜택 매핑
         usersRepository.flush();
         usersDetailsRepository.flush();
