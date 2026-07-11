@@ -2,6 +2,7 @@ package com.fitu.benefitu.domain.users.controller;
 
 import com.fitu.benefitu.domain.users.dto.UsersInfoSubmitRequest;
 import com.fitu.benefitu.domain.users.dto.UsersInfoSubmitResponse;
+import com.fitu.benefitu.domain.users.dto.UsersMetadataResponse;
 import com.fitu.benefitu.domain.users.service.UsersService;
 import com.fitu.benefitu.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,10 @@ public class UsersController {
             @RequestBody UsersInfoSubmitRequest usersInfoSubmitRequest
     ){
         return ResponseEntity.ok(ApiResponse.success(usersService.updateInfo(usersInfoSubmitRequest)));
+    }
+
+    @GetMapping("/meta-data")
+    public ResponseEntity<ApiResponse<UsersMetadataResponse>> getMetaData(){
+        return ResponseEntity.ok(ApiResponse.success(usersService.getMetadata()));
     }
 }
