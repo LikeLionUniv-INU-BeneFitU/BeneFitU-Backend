@@ -177,4 +177,34 @@ public class UsersService {
                 )
         );
     }
+
+    public UsersInfoSubmitResponse updateInfo(UsersInfoSubmitRequest usersInfoSubmitRequest) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        Users user = usersRepository.findById(userId).orElseThrow();
+        System.out.println("[valid] 검증 시작");
+        validateSubmitInfo(usersInfoSubmitRequest);
+
+        user.toSubmittedUsers(usersInfoSubmitRequest.baseInfo());
+
+        UsersDetails usersDetails = usersDetailsRepository.findByUsers(user);
+        usersDetails.updateUserDetails(usersInfoSubmitRequest.detailInfo());
+
+        List<UsersInterests> usersInterests = usersInterestsRepository.findByUsers(user);
+        usersInterestsRepository.deleteAll(usersInterests);
+
+        List<UsersInterests> newUsersInterests = UsersInterests.toInterests(usersInfoSubmitRequest.detailInfo().interests(), user);
+        usersInterests.addAll(newUsersInterests);
+
+        List<String> interestsResponses = newUsersInterests.stream().map(a -> a.getCategory().getDescription()).toList();
+        return new UsersInfoSubmitResponse(
+                usersInfoSubmitRequest.baseInfo(),
+                new DetailInfoResponse(
+                        usersDetails.getGpa(),
+                        usersDetails.getIncomeBracket(),
+                        usersDetails.getIsBasicLiving(),
+                        usersDetails.getIsSecondLowest(),
+                        interestsResponses
+                )
+        );
+    }
 }

@@ -30,6 +30,6 @@ public class UsersController {
     public ResponseEntity<ApiResponse<UsersInfoSubmitResponse>> updateInfo(
             @RequestBody UsersInfoSubmitRequest usersInfoSubmitRequest
     ){
-        return null;
+        return ResponseEntity.ok(ApiResponse.success(usersService.updateInfo(usersInfoSubmitRequest)));
     }
 }
