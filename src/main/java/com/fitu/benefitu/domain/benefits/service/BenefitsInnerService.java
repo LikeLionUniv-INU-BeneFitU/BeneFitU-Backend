@@ -44,6 +44,7 @@ public class BenefitsInnerService {
 
         // 1. 루프 밖에서 전체 TargetConditions를 한 번에 조회하여 Map으로 캐싱 (N+1 방지)
         List<BenefitTargetConditions> allTargets = benefitTargetConditionsRepository.findAll();
+        System.out.println("[DEBUG] 전체 타겟 조건 개수: " + allTargets.size());
         Map<Benefits, BenefitTargetConditions> targetMap = allTargets.stream()
                 .collect(Collectors.toMap(BenefitTargetConditions::getBenefit, target -> target, (a, b) -> a));
 
@@ -72,8 +73,10 @@ public class BenefitsInnerService {
                 usersAppliedBenefitsList.add(appliedBenefit);
             }
         }
-
+        System.out.println("[DEBUG] 최종 저장될 UsersAppliedBenefits 개수: " + usersAppliedBenefitsList.size());
         usersAppliedBenefitsRepository.saveAll(usersAppliedBenefitsList);
+
+        usersAppliedBenefitsRepository.flush();
     }
 
     /**
