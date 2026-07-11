@@ -1,10 +1,12 @@
 package com.fitu.benefitu.domain.benefits.service;
 
 import com.fitu.benefitu.domain.auth.service.AuthService;
+import com.fitu.benefitu.domain.benefits.dto.CountByCategoryResponse;
 import com.fitu.benefitu.domain.benefits.dto.GetBenefitListResponse;
 import com.fitu.benefitu.domain.benefits.dto.SetApplyStatusResponse;
 import com.fitu.benefitu.domain.benefits.entity.Benefits;
 import com.fitu.benefitu.domain.benefits.repository.BenefitsRepository;
+import com.fitu.benefitu.domain.benefits.types.BenefitCategory;
 import com.fitu.benefitu.domain.users.entity.Users;
 import com.fitu.benefitu.domain.users.entity.UsersAppliedBenefits;
 import com.fitu.benefitu.domain.users.repository.UsersAppliedBenefitsRepository;
@@ -32,7 +34,7 @@ public class BenefitsService {
     private final BenefitsRepository benefitsRepository;
 
     public GetBenefitListResponse getBenefitList(String category, String sort, Integer page) {
-        int pagesize = 3;
+        int pageSize = 3;
         CategoryType categoryType = CategoryType.fromString(category);
         SortType sortType = SortType.valueOf(sort);
 
@@ -45,8 +47,8 @@ public class BenefitsService {
             usersAppliedBenefitsList.sort(Comparator.comparing(Benefits::getDeadLine, Comparator.nullsLast(Comparator.naturalOrder())));
         }
         List<GetBenefitListResponse.Benefits> benefitsList = new ArrayList<>();
-        if ((page + 1) * pagesize <= usersAppliedBenefitsList.size()) {
-            for (int i = pagesize * page; i < pagesize * page + pagesize; i++) {
+        if ((page + 1) * pageSize <= usersAppliedBenefitsList.size()) {
+            for (int i = pageSize * page; i < pageSize * page + pageSize; i++) {
                 Benefits benefits = usersAppliedBenefitsList.get(i);
                 if (!categoryType.equals(CategoryType.ALL)) {
                     if (benefits.getCategories().stream()
@@ -73,7 +75,7 @@ public class BenefitsService {
             }
         }
 
-        int totalPageNumber = usersAppliedBenefitsList.size() / pagesize - 1;
+        int totalPageNumber = usersAppliedBenefitsList.size() / pageSize - 1;
 
         return new GetBenefitListResponse(totalPageNumber, benefitsList);
     }
@@ -88,5 +90,37 @@ public class BenefitsService {
         appliedbenefits.updateApplyStatus(applyStatus);
 
         return new SetApplyStatusResponse(benefits.getId());
+    }
+
+    public CountByCategoryResponse getCountByCategory() {
+        Users user = usersRepository.findById(authService.getUserId()).orElseThrow();
+        List<UsersAppliedBenefits> appliedBenefits = usersAppliedBenefitsRepository.findByUserAndStatus(user, ApplyStatus.NOT_SELECTED);
+        int corporateCount = 0;
+        int regionCount = 0;
+        int requirementsCount = 0;
+        int stateCount = 0;
+
+        for(UsersAppliedBenefits benefits : appliedBenefits){
+            BenefitCategory category = benefits.getBenefit().getCategories().getFirst().getBenefitCategory();
+            if(category.equals(BenefitCategory.CORPORATE)){
+                corporateCount++;
+            }
+            else if(category.equals(BenefitCategory.REGIONAL)){
+                regionCount++;
+            }
+            else if(category.equals(BenefitCategory.CONDITIONAL)){
+                requirementsCount++;
+            }
+            else if(category.equals(BenefitCategory.NATIONAL)){
+                stateCount++;
+            }
+        }
+
+        return new CountByCategoryResponse(
+                corporateCount,
+                regionCount,
+                requirementsCount,
+                stateCount
+        );
     }
 }
