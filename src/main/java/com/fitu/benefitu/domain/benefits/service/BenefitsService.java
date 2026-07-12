@@ -197,7 +197,7 @@ public class BenefitsService {
 
         GetBenefitsDetailsResponse.MatchedConditions matchedConditions = new GetBenefitsDetailsResponse.MatchedConditions(
                 "학점 " + benefits.getScoringWeights().getGpa() + " 이상",
-                "소득분위 " + (benefits.getScoringWeights().getIncomeBracket()==null?10:benefits.getScoringWeights().getIncomeBracket())+"이하",
+                "소득분위 " + (benefits.getScoringWeights().getIncomeBracket()==null?10:benefits.getScoringWeights().getIncomeBracket())+"구간 이하",
                 "기초생활수급자" + (benefits.getScoringWeights().getIsBasicLiving()?"이" : " 상관없이"),
                 "차상위계층" + (benefits.getScoringWeights().getIsSecondLowest()?"이":" 상관없이")
         );
