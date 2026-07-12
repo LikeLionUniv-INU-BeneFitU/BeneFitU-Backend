@@ -46,43 +46,64 @@ public class BenefitsService {
         SortType sortType = SortType.valueOf(sort);
 
         Users user = usersRepository.findById(authService.getUserId()).orElseThrow();
-        List<Benefits> usersAppliedBenefitsList = new ArrayList<>(usersAppliedBenefitsRepository.findByUserAndStatus(user, ApplyStatus.NOT_APPLIED).stream().map(UsersAppliedBenefits::getBenefit).toList());
+        List<Benefits> usersAppliedBenefitsList = new ArrayList<>(
+                usersAppliedBenefitsRepository.findByUserAndStatus(user, ApplyStatus.NOT_APPLIED)
+                        .stream()
+                        .map(UsersAppliedBenefits::getBenefit)
+                        .toList()
+        );
 
+        // 1. 카테고리 필터링이 있다면 '정렬과 페이징 전'에 미리 수행해서 데이터 유실을 방지합니다.
+        if (!categoryType.equals(CategoryType.ALL)) {
+            usersAppliedBenefitsList = usersAppliedBenefitsList.stream()
+                    .filter(benefits -> benefits.getCategories().stream()
+                            .anyMatch(a -> a.getBenefitCategory().mappingCategoryTreeAndReturnDescription(categoryType) != null))
+                    .toList();
+        }
+
+        // 2. 정렬 (Null 세이프하게 다듬기)
         if (sortType.equals(SortType.AMOUNT_HIGH)) {
-            usersAppliedBenefitsList.sort(Comparator.comparingLong(Benefits::getAmount).reversed());
+            usersAppliedBenefitsList.sort(Comparator.comparing(Benefits::getAmount, Comparator.nullsLast(Comparator.reverseOrder())));
         } else if (sortType.equals(SortType.DEADLINE_IMMINENT)) {
             usersAppliedBenefitsList.sort(Comparator.comparing(Benefits::getDeadLine, Comparator.nullsLast(Comparator.naturalOrder())));
         }
-        List<GetBenefitListResponse.Benefits> benefitsList = new ArrayList<>();
-        if ((page + 1) * pageSize <= usersAppliedBenefitsList.size()) {
-            for (int i = pageSize * page; i < pageSize * page + pageSize; i++) {
-                Benefits benefits = usersAppliedBenefitsList.get(i);
-                if (!categoryType.equals(CategoryType.ALL)) {
-                    if (benefits.getCategories().stream()
-                            .noneMatch(a ->
-                                    a.getBenefitCategory()
-                                            .mappingCategoryTreeAndReturnDescription(categoryType) != null)) {
-                        continue;
-                    }
-                }
 
-                String amount = "조건별 상이함";
-                if (benefits.getAmount() != null) {
-                    if (benefits.getAmount() / 10000 > 0) {
-                        amount = "최대 " + benefits.getAmount() / 10000 + " 만원";
-                    }
-                }
-                benefitsList.add(new GetBenefitListResponse.Benefits(
-                        benefits.getId(),
-                        benefits.getBenefitName(),
-                        benefits.getCategories().stream().map(a -> a.getBenefitCategory().getDescription()).toList(),
-                        "D - " + ChronoUnit.DAYS.between(LocalDate.now(), benefits.getDeadLine()),
-                        amount
-                ));
-            }
+        // 3. 안전한 총 페이지 수 산출 (데이터가 0개면 0페이지, 13개면 2페이지 등 올림 처리)
+        int totalElements = usersAppliedBenefitsList.size();
+        int totalPageNumber = (totalElements == 0) ? 0 : (int) Math.ceil((double) totalElements / pageSize);
+
+        // 4. 안전한 페이징 인덱스 계산 (데이터 개수가 부족해도 에러가 나지 않음)
+        int fromIndex = page * pageSize;
+
+        // 만약 프론트가 전체 데이터 수보다 더 큰 페이지 번호를 요청하면 빈 리스트 리턴
+        if (fromIndex >= totalElements) {
+            return new GetBenefitListResponse(totalPageNumber, List.of());
         }
 
-        int totalPageNumber = usersAppliedBenefitsList.size() / pageSize - 1;
+        // 끝점은 데이터 크기를 넘지 않도록 Math.min으로 방어
+        int toIndex = Math.min(fromIndex + pageSize, totalElements);
+
+        // 5. 필요한 구간만 안전하게 잘라서(subList) DTO로 변환
+        List<GetBenefitListResponse.Benefits> benefitsList = usersAppliedBenefitsList.subList(fromIndex, toIndex).stream()
+                .map(benefits -> {
+                    String amount = "조건별 상이함";
+                    if (benefits.getAmount() != null && benefits.getAmount() / 10000 > 0) {
+                        amount = "최대 " + benefits.getAmount() / 10000 + " 만원";
+                    }
+
+                    String dDay = (benefits.getDeadLine() != null)
+                            ? "D - " + ChronoUnit.DAYS.between(LocalDate.now(), benefits.getDeadLine())
+                            : "상시모집";
+
+                    return new GetBenefitListResponse.Benefits(
+                            benefits.getId(),
+                            benefits.getBenefitName(),
+                            benefits.getCategories().stream().map(a -> a.getBenefitCategory().getDescription()).toList(),
+                            dDay,
+                            amount
+                    );
+                })
+                .toList();
 
         return new GetBenefitListResponse(totalPageNumber, benefitsList);
     }
