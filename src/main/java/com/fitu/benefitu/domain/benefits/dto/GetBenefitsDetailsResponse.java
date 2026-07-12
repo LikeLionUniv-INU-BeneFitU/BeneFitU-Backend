@@ -18,6 +18,7 @@ public record GetBenefitsDetailsResponse(
         private final Long benefitId;
         private final String benefitName;
         private final String category;
+        private final String amount;
         private final String deadLine;
         private final String benefitUrl;
         private final List<String> notes;
