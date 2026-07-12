@@ -191,6 +191,7 @@ public class BenefitsService {
                 benefits.getCategories().getFirst().getBenefitCategory().getDescription(),
                 amount,
                 benefits.getDeadLine().toString(),
+                benefits.getBenefitUrl(),
                 notes
         );
 
