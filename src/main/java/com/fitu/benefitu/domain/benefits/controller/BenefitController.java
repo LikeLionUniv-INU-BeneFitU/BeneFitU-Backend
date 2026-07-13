@@ -36,8 +36,11 @@ public class BenefitController {
     }
 
     @GetMapping("/applied")
-    public ResponseEntity<ApiResponse<GetAppliedBenefitsResponse>> getAppliedBenefits(){
-        return ResponseEntity.ok(ApiResponse.success(benefitsService.getAppliedBenefits()));
+    public ResponseEntity<ApiResponse<GetAppliedBenefitsResponse>> getAppliedBenefits(
+            // defaultValue를 지정하여 파라미터가 누락되어도 500 에러가 나지 않도록 방어합니다.
+            @RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber
+    ){
+        return ResponseEntity.ok(ApiResponse.success(benefitsService.getAppliedBenefits(pageNumber)));
     }
 
     @GetMapping("/{benefitId}")
