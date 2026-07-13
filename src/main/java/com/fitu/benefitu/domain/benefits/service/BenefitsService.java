@@ -165,19 +165,40 @@ public class BenefitsService {
         return new GetTotalAmountResponse(formattedAmount);
     }
 
-    public GetAppliedBenefitsResponse getAppliedBenefits() {
+    public GetAppliedBenefitsResponse getAppliedBenefits(int pageNumber) {
+        int pageSize = 10;
         Users user = usersRepository.findById(authService.getUserId()).orElseThrow();
-        List<UsersAppliedBenefits> appliedBenefits = usersAppliedBenefitsRepository.findByUser(user);
-        List<GetAppliedBenefitsResponse.AppliedBenefits> appliedBenefitsList =
-                appliedBenefits.stream()
-                        .filter(a->!a.getStatus().equals(ApplyStatus.NOT_APPLIED))
-                        .map(a->new GetAppliedBenefitsResponse.AppliedBenefits(
-                                a.getBenefit().getId(),
-                                a.getBenefit().getBenefitName(),
-                                a.getAppliedAt().toString(),
-                                a.getStatus().toString()
-                        )).toList();
-        return new GetAppliedBenefitsResponse(appliedBenefitsList);
+
+        // 1. 조건에 맞는 데이터만 필터링 및 변환 진행
+        List<GetAppliedBenefitsResponse.AppliedBenefits> appliedBenefitsList = usersAppliedBenefitsRepository.findByUser(user)
+                .stream()
+                .filter(a -> !a.getStatus().equals(ApplyStatus.NOT_APPLIED))
+                .map(a -> new GetAppliedBenefitsResponse.AppliedBenefits(
+                        a.getBenefit().getId(),
+                        a.getBenefit().getBenefitName(),
+                        a.getAppliedAt().toString(),
+                        a.getStatus().toString()
+                ))
+                .toList();
+
+        // 2. 필터링이 완전히 완료된 '최종 데이터 개수'로 페이지 수를 산출해야 합니다.
+        int totalElements = appliedBenefitsList.size();
+        int totalPageNumber = (totalElements == 0) ? 0 : (int) Math.ceil((double) totalElements / pageSize);
+
+        // 3. 안전한 페이징 구간 계산 (시작점과 끝점 구하기)
+        int fromIndex = pageNumber * pageSize;
+
+        // 요청한 페이지 번호가 전체 데이터 범위를 벗어나면 바로 빈 리스트 반환
+        if (fromIndex >= totalElements) {
+            return new GetAppliedBenefitsResponse(totalPageNumber, List.of());
+        }
+
+        int toIndex = Math.min(fromIndex + pageSize, totalElements);
+
+        // 4. 안전하게 서브리스트로 잘라서 반환
+        List<GetAppliedBenefitsResponse.AppliedBenefits> pagedList = appliedBenefitsList.subList(fromIndex, toIndex);
+
+        return new GetAppliedBenefitsResponse(totalPageNumber, pagedList);
     }
 
     public GetBenefitsDetailsResponse getBenefitsDetails(Long benefitId) {

@@ -6,6 +6,7 @@ import lombok.Getter;
 import java.util.List;
 
 public record GetAppliedBenefitsResponse(
+        Integer totCount,
         List<AppliedBenefits> appliedBenefits
 ) {
     @Getter
